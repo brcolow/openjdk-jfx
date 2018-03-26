@@ -40,6 +40,8 @@ WIN.library = { name -> return "${name}.dll" as String }
 WIN.libDest = "bin"
 WIN.modLibDest = "lib"
 
+System.out.println("test")
+
 setupTools("windows_tools",
     { propFile ->
         // Create the properties file
