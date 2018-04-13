@@ -28,12 +28,18 @@ on_finish:
   - ps: |
         $crashes = Get-ChildItem -Include hs_err_pid*.log -Recurse
         Write-Output $crashes
-        $javaExe = $env.JAVA_HOME + '\bin\java.exe'
+        $javaExe = $env:JAVA_HOME + '\bin\java.exe'
         # This could be made much more useful if we had win32 debugging symbols for the JDK.
+        # One way to do this would be to build JavaFX with `CONF = DebugNative` set in
+        # gradle.properties. This will produce CDB symbol files (because the /Zi argument is
+        # passed to the Visual Studio compiler).
         ForEach ($crash in $crashes) {
+          $env:Path += ";C:\Program Files (x86)\Windows Kits\8.0\Debuggers\x64\;C:\Program Files (x86)\Windows Kits\8.0\Debuggers\x86\;"
+          Write-Host "Printing crash dump (${crash}):"
           Get-Content $crash
-          $crashDump = $crash.Name + '.mdmp'
-          Start-Process -FilePath "C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\cdb.exe" -ArgumentList "-v -z $crashDump -c '!sym noisy;~*;kb;q' -i $javaExe"
+          $crashDump = $crash.DirectoryName + '\' + $crash.Basename + '.mdmp'
+          cdb -version
+          cdb -v -z $crashDump -c '!sym noisy;~*;kb;q' -i $javaExe # -y symbol_path
         }
 
         # This technically works but is really inefficient as it requires an HTTP request for every
