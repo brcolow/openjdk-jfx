@@ -76,6 +76,12 @@ on_finish:
         REM cd jdk/
         REM C:\cygwin\bin\bash "PATH=/bin:/cygdrive/c/Windows/System32:/cygdrive/c/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Auxiliary/Build && ./configure --with-import-modules=/cygdrive/c/projects/openjfx/build/modular-sdk --with-boot-jdk=/cygdrive/c/jdk-10"
 
+on_success:
+  - ps: |
+        $dbgArchive = "win-debug-symbols-$($env:APPVEYOR_BUILD_VERSION).zip"
+        Get-ChildItem -Include *.pdb, *.map -Recurse | Compress-Archive -DestinationPath $dbgArchive -CompressionLevel Optimal
+        Push-AppveyorArtifact $dbgArchive -Verbose
+
 cache:
   - C:\Users\appveyor\.gradle\caches
   - '%JAVA_HOME% -> appveyor.yml'
