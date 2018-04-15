@@ -23,7 +23,7 @@ build_script:
       $env:VSVARS32FILE = "$env:VCINSTALLDIR\vcvars32.bat"
       refreshenv
       # Must invoke gradle with cmd.exe so stderr output doesn't fail the build:
-  - cmd: gradle test -PCOMPILE_WEBKIT=false --stacktrace -x :web:test --info --no-daemon
+  - cmd: gradle test -PCOMPILE_WEBKIT=false -PCONF=DebugNative --stacktrace -x :web:test --info --no-daemon
 on_finish:
   - ps: |
         $crashes = Get-ChildItem -Include hs_err_pid*.log -Recurse
