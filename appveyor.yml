@@ -6,6 +6,7 @@ environment:
   JAVA_HOME: C:\jdk10
   VCINSTALLDIR: C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build
   APPVEYOR_CACHE_ENTRY_ZIP_ARGS: "-t7z -m0=lzma -mx=9"
+  _JAVA_OPTIONS: "-Dprism.verbose=true -Dglass.win.uiScale=200%"
 
 shallow_clone: true
 
@@ -23,7 +24,7 @@ build_script:
       $env:VSVARS32FILE = "$env:VCINSTALLDIR\vcvars32.bat"
       refreshenv
       # Must invoke gradle with cmd.exe so stderr output doesn't fail the build:
-  - cmd: gradlew test -PCOMPILE_WEBKIT=false --stacktrace -x :web:test --info --no-daemon
+  - cmd: gradlew build -PCOMPILE_WEBKIT=false -PFULL_TEST=true -stacktrace -x :web:test --info --no-daemon
 on_finish:
   - ps: |
         $crashes = Get-ChildItem -Include hs_err_pid*.log -Recurse
