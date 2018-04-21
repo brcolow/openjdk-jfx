@@ -28,6 +28,13 @@ public class SimpleFXRobotTest extends VisualTestBase {
     @Test(timeout = 15000)
     public void test() {
         runAndWait(() -> {
+            BorderPane root = new BorderPane();
+            Scene scene = new Scene(root, 100, 100);
+
+            Button button = new Button("Click me");
+            button.setOnAction(e -> clicked = true);
+
+            root.setCenter(button);
             testStage = getStage();
             testScene = new Scene(root, 100, 100);
 
@@ -36,13 +43,6 @@ public class SimpleFXRobotTest extends VisualTestBase {
             testStage.setTitle("Simple Robot Test");
             testStage.initStyle(StageStyle.UNDECORATED);
 
-            BorderPane root = new BorderPane();
-            Scene scene = new Scene(root, 100, 100);
-
-            Button button = new Button("Click me");
-            button.setOnAction(e -> clicked = true);
-
-            root.setCenter(button);
             testStage.setScene(scene);
             testStage.setX(300);
             testStage.setY(300);
