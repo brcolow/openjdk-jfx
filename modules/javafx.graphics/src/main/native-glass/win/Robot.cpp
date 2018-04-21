@@ -133,14 +133,14 @@ JNIEXPORT void JNICALL Java_com_sun_glass_ui_win_WinRobot__1mouseMove
     y -= curPos.y;
 
     // Move the cursor to the desired coordinates.
-    INPUT mouseInput = {0};
-    mouseInput.type = INPUT_MOUSE;
-    mouseInput.mi.mouseData = 0;
-    mouseInput.mi.dx = x;
-    mouseInput.mi.dy = y;
-    mouseInput.mi.dwFlags = MOUSEEVENTF_MOVE;
-    ::SendInput(1, &mouseInput, sizeof(mouseInput));
-    // ::mouse_event(MOUSEEVENTF_MOVE, x, y, 0, 0);
+    // INPUT mouseInput = {0};
+    // mouseInput.type = INPUT_MOUSE;
+    // mouseInput.mi.mouseData = 0;
+    // mouseInput.mi.dx = x;
+    // mouseInput.mi.dy = y;
+    // mouseInput.mi.dwFlags = MOUSEEVENTF_MOVE;
+    // ::SendInput(1, &mouseInput, sizeof(mouseInput));
+    ::mouse_event(MOUSEEVENTF_MOVE, x, y, 0, 0);
 
     // Restore the old Mouse Acceleration Constants.
     bResult = ::SystemParametersInfo(SPI_SETMOUSE,0, oldAccel, SPIF_SENDCHANGE);
