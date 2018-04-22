@@ -14,6 +14,7 @@ import test.robot.testharness.VisualTestBase;
 
 import com.sun.glass.ui.Robot;
 
+import static org.junit.Assert.assertTrue;
 
 /**
  * Simple standalone FX robot test. Compile with:
@@ -26,53 +27,33 @@ public class SimpleFXRobotTest extends VisualTestBase {
     private boolean clicked = false;
 
     @Test(timeout = 15000)
-    public void test() {
+    public void robotTest() {
         runAndWait(() -> {
             BorderPane root = new BorderPane();
-            Scene scene = new Scene(root, 100, 100);
-
             Button button = new Button("Click me");
             button.setOnAction(e -> clicked = true);
-
             root.setCenter(button);
             testStage = getStage();
             testScene = new Scene(root, 100, 100);
-
             testStage.setScene(testScene);
-
             testStage.setTitle("Simple Robot Test");
             testStage.initStyle(StageStyle.UNDECORATED);
-
-            testStage.setScene(scene);
             testStage.setX(300);
             testStage.setY(300);
             testStage.show();
-
-            Thread testThread = new Thread(() -> {
-                Platform.runLater(() -> {
-                    //robot.mouseMove(0, 0);
-                    int x = 350;
-                    int y = 350;
-                    System.err.println("mouseMove(" + x + ", " + y + ")");
-                    robot.mouseMove(x, y);
-                });
-                try { Thread.sleep(500); } catch (Exception ex) {}
-                Platform.runLater(() -> {
-                    robot.mousePress(Robot.MOUSE_LEFT_BTN);
-                });
-                try { Thread.sleep(500); } catch (Exception ex) {}
-                Platform.runLater(() -> {
-                    robot.mouseRelease(Robot.MOUSE_LEFT_BTN);
-                });
-                try { Thread.sleep(500); } catch (Exception ex) {}
-                if (clicked) {
-                    System.out.println("PASSED");
-                } else {
-                    System.out.println("***** FAILED");
-                }
-                Platform.exit();
+            Platform.runLater(() -> {
+                //robot.mouseMove(0, 0);
+                int x = 350;
+                int y = 350;
+                System.out.println("mouseMove(" + x + ", " + y + ")");
+                robot.mouseMove(x, y);
             });
-            testThread.start();
+            Thread.sleep(500);
+            Platform.runLater(() -> robot.mousePress(Robot.MOUSE_LEFT_BTN));
+            Thread.sleep(500);
+            Platform.runLater(() -> robot.mouseRelease(Robot.MOUSE_LEFT_BTN));
+            Thread.sleep(500);
+            assertTrue(clicked);
         });
     }
 }
