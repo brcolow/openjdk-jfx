@@ -132,8 +132,14 @@ JNIEXPORT void JNICALL Java_com_sun_glass_ui_win_WinRobot__1mouseMove
     x -= curPos.x;
     y -= curPos.y;
 
-    ::mouse_event(MOUSEEVENTF_MOVE, x, y, 0, 0);
     // Move the cursor to the desired coordinates.
+    INPUT mouseInput = {0};
+    mouseInput.type = INPUT_MOUSE;
+    mouseInput.mi.mouseData = 0;
+    mouseInput.mi.dx = x;
+    mouseInput.mi.dy = y;
+    mouseInput.mi.dwFlags = MOUSEEVENTF_MOVE;
+    ::SendInput(1, &mouseInput, sizeof(mouseInput));
 
     // Restore the old Mouse Acceleration Constants.
     bResult = ::SystemParametersInfo(SPI_SETMOUSE,0, oldAccel, SPIF_SENDCHANGE);
@@ -265,7 +271,16 @@ JNIEXPORT void JNICALL Java_com_sun_glass_ui_win_WinRobot__1mouseRelease
 JNIEXPORT void JNICALL Java_com_sun_glass_ui_win_WinRobot__1mouseWheel
     (JNIEnv *env, jobject jrobot, jint wheelAmt)
 {
-    ::mouse_event(MOUSEEVENTF_WHEEL, 0, 0, wheelAmt * -1 * WHEEL_DELTA, 0);
+    INPUT mouseInput = {0};
+    mouseInput.type = INPUT_MOUSE;
+    mouseInput.mi.dx = 0;
+    mouseInput.mi.dy = 0;
+    mouseInput.mi.dwFlags = MOUSEEVENTF_WHEEL;
+    mouseInput.mi.time = 0;
+    mouseInput.mi.mouseData = wheelAmt * -1 * WHEEL_DELTA;
+    mouseInput.mi.dwExtraInfo = 0;
+    ::SendInput(1, &mouseInput, sizeof(mouseInput));
+    // ::mouse_event(MOUSEEVENTF_WHEEL, 0, 0, wheelAmt * -1 * WHEEL_DELTA, 0);
 }
 
 void GetScreenCapture(jint x, jint y, jint devw, jint devh,

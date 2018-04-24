@@ -60,7 +60,7 @@ public abstract class VisualTestBase {
     private List<Stage> stages = new ArrayList<>();
 
     // Glass Robot instance
-    Robot robot;
+    public Robot robot;
 
     // Application class. An instance is created and initialized before running
     // the first test, and it lives through the execution of all tests.
