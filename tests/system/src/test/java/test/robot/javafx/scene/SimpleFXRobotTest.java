@@ -27,7 +27,7 @@ public class SimpleFXRobotTest extends VisualTestBase {
     private boolean clicked = false;
 
     @Test(timeout = 15000)
-    public void robotTest() throws Exception {
+    public void robotTest() throws InterruptedException {
         runAndWait(() -> {
             BorderPane root = new BorderPane();
             Button button = new Button("Click me");
@@ -48,11 +48,15 @@ public class SimpleFXRobotTest extends VisualTestBase {
                 System.out.println("mouseMove(" + x + ", " + y + ")");
                 robot.mouseMove(x, y);
             });
+            try {
             Thread.sleep(500);
             Platform.runLater(() -> robot.mousePress(Robot.MOUSE_LEFT_BTN));
             Thread.sleep(500);
             Platform.runLater(() -> robot.mouseRelease(Robot.MOUSE_LEFT_BTN));
             Thread.sleep(500);
+            } catch (Exception e) {
+                System.err.println("exception: " + e);
+            }
             assertTrue(clicked);
         });
     }
