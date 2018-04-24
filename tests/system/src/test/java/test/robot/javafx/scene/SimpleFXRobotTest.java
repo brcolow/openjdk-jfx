@@ -27,7 +27,7 @@ public class SimpleFXRobotTest extends VisualTestBase {
     private boolean clicked = false;
 
     @Test(timeout = 15000)
-    public void robotTest() {
+    public void robotTest() throws Exception {
         runAndWait(() -> {
             BorderPane root = new BorderPane();
             Button button = new Button("Click me");
