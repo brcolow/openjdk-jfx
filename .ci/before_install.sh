@@ -6,6 +6,8 @@ if [[ "${TRAVIS_OS_NAME}" == osx ]]; then
   brew install findutils
   brew cask reinstall java
   brew unlink python # fixes 'run_one_line' is not defined error in backtrace
+  brew install ccache
+  export PATH="/usr/local/opt/ccache/libexec:$PATH"
 fi
 
 if [[ "${TRAVIS_OS_NAME}" == linux ]]; then
