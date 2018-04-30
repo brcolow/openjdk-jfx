@@ -189,8 +189,8 @@ setupTools("linux_freetype_tools",
     }
 )
 
-def compiler = IS_COMPILE_PARFAIT ? "parfait-gcc" : "ccache gcc";
-def linker = IS_COMPILE_PARFAIT ? "parfait-g++" : "ccache g++";
+def compiler = IS_COMPILE_PARFAIT ? "parfait-gcc" : System.env['TRAVIS'] != null ? "ccache-gcc" : "gcc"
+def linker = IS_COMPILE_PARFAIT ? "parfait-g++" : System.env['TRAVIS'] != null ? "ccache-gcc" : "g++"
 
 LINUX.glass = [:]
 LINUX.glass.variants = ["glass", "glassgtk2"]

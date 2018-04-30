@@ -7,7 +7,7 @@ BOOT_JDK10="jdk-10-ea+${BOOT_JDK10_VER}"
 echo "which java: $(which java)"
 ulimit -c unlimited -S
 
-sh ./gradlew build -x :web:test --no-daemon --stacktrace --info
+sh ./gradlew build -x :web:test --no-daemon --stacktrace --info --console=plain
 
 # Print core dumps when JVM crashes.
 RESULT=$?
