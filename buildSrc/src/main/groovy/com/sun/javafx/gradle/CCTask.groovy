@@ -50,6 +50,7 @@ class CCTask extends NativeCompileTask {
         // TODO the PDB file is never being built -- maybe because it is only built during
         // debug builds, otherwise that flag is ignored "/Fd" or "-Fd"
         project.exec({
+            System.out.println("Compiler: " + compiler)
             commandLine(compiler);
 
             // Add in any additional compilation params
