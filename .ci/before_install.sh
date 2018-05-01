@@ -3,7 +3,7 @@ set -euo pipefail
 
 ccache_wrapper () {
   mkdir -p ~/ccache
-  echo '#!/usr/bin/env bash' >> ~/ccache/ccache-"$1"
+  echo '#!/bin/sh' >> ~/ccache/ccache-"$1"
   echo "ccache $1 \"\$*\"" >> ~/ccache/ccache-"$1"
   chmod +x ~/ccache/ccache-"$1"
   ls -la ~/ccache
