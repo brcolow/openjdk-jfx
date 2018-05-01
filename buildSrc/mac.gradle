@@ -128,8 +128,8 @@ def linkFlags = [
         "-dynamiclib", "-lobjc"].flatten();
 
 
-def compiler = IS_COMPILE_PARFAIT ? "parfait-clang" : System.env['TRAVIS'] != null ? "ccache-clang" : "clang"
-def linker = IS_COMPILE_PARFAIT ? "parfait-clang++" : System.env['TRAVIS'] != null ? "ccache-clang++" : "clang++"
+def compiler = IS_COMPILE_PARFAIT ? "parfait-clang" : System.env['TRAVIS'] != null ? "~/ccache/ccache-clang" : "clang"
+def linker = IS_COMPILE_PARFAIT ? "parfait-clang++" : System.env['TRAVIS'] != null ? "~/ccache/ccache-clang++" : "clang++"
 
 MAC.glass = [:]
 MAC.glass.javahInclude = [
