@@ -3,10 +3,9 @@ set -euo pipefail
 
 ccache_wrapper () {
   mkdir -p ~/ccache
-  echo "#!/bin/bash" >> ~/ccache/ccache-"$1"
-  echo "ccache $1 \"$*\"" >> ~/ccache/ccache-"$1"
+  echo '#!/usr/bin/env bash' >> ~/ccache/ccache-"$1"
+  echo "ccache $1 \"\$*\"" >> ~/ccache/ccache-"$1"
   chmod +x ~/ccache/ccache-"$1"
-  ls ~/ccache
 }
 
 if [[ "${TRAVIS_OS_NAME}" == osx ]]; then
