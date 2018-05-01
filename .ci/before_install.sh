@@ -6,6 +6,7 @@ ccache_wrapper () {
   echo "#!/bin/bash" >> ~/ccache/ccache-"$1"
   echo "ccache $1 \"$*\"" >> ~/ccache/ccache-"$1"
   chmod +x ~/ccache/ccache-"$1"
+  ls ~/ccache
 }
 
 if [[ "${TRAVIS_OS_NAME}" == osx ]]; then
