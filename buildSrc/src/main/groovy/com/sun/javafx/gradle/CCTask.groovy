@@ -50,12 +50,7 @@ class CCTask extends NativeCompileTask {
         // TODO the PDB file is never being built -- maybe because it is only built during
         // debug builds, otherwise that flag is ignored "/Fd" or "-Fd"
         project.exec({
-            System.out.println("Compiler: " + compiler)
             commandLine(compiler);
-
-            if (System.getenv("TRAVIS") != null) {
-                args("/home/travis/ccache/ccache-gcc")
-            }
             // Add in any additional compilation params
             if (params != null) {
                 // A little hack. Only use the -std=c99 flag if compiling .c or .m
