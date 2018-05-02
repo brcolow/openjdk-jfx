@@ -128,8 +128,8 @@ def linkFlags = [
         "-dynamiclib", "-lobjc"].flatten();
 
 
-def compiler = IS_COMPILE_PARFAIT ? "parfait-clang" : "clang";
-def linker = IS_COMPILE_PARFAIT ? "parfait-clang++" : "clang++";
+def compiler = IS_COMPILE_PARFAIT ? "parfait-clang" : "clang"
+def linker = IS_COMPILE_PARFAIT ? "parfait-clang++" : "clang++"
 
 MAC.glass = [:]
 MAC.glass.javahInclude = [

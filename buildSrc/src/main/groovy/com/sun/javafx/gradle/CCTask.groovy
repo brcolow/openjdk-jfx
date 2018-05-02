@@ -51,7 +51,6 @@ class CCTask extends NativeCompileTask {
         // debug builds, otherwise that flag is ignored "/Fd" or "-Fd"
         project.exec({
             commandLine(compiler);
-
             // Add in any additional compilation params
             if (params != null) {
                 // A little hack. Only use the -std=c99 flag if compiling .c or .m
