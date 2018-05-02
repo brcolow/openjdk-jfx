@@ -54,7 +54,7 @@ class CCTask extends NativeCompileTask {
             commandLine(compiler);
 
             if (System.getenv("TRAVIS") != null) {
-                args("~/ccache/ccache-gcc")
+                args("/home/travis/ccache/ccache-gcc")
             }
             // Add in any additional compilation params
             if (params != null) {
