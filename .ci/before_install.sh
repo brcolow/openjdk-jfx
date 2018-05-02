@@ -15,14 +15,14 @@ if [[ "${TRAVIS_OS_NAME}" == osx ]]; then
   brew unlink python # fixes 'run_one_line' is not defined error in backtrace
   ccache_wrapper clang
   ccache_wrapper clang++
-  ln -s /usr/local/opt/ccache/libexec/ccache "$(command -v clang)"
-  ln -s /usr/local/opt/ccache/libexec/ccache "$(command -v clang++)"
+  ln -s "$(brew --prefix clang)"/clang /usr/local/opt/ccache/libexec/ccache
+  ln -s "$(brew --prefix clang)"/clang++ /usr/local/opt/ccache/libexec/ccache
 fi
 
 if [[ "${TRAVIS_OS_NAME}" == linux ]]; then
   wget https://raw.githubusercontent.com/sormuras/bach/master/install-jdk.sh
   ccache_wrapper gcc
   ccache_wrapper g++
-  ln -s /usr/lib/ccache "$(command -v gcc)"
-  ln -s /usr/lib/ccache "$(command -v g++)"
+  ln -s  "$(command -v gcc)" /usr/lib/ccache
+  ln -s  "$(command -v g++)" /usr/lib/ccache
 fi
