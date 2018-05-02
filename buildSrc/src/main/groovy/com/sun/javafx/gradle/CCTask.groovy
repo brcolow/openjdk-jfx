@@ -53,6 +53,9 @@ class CCTask extends NativeCompileTask {
             System.out.println("Compiler: " + compiler)
             commandLine(compiler);
 
+            if (System.getenv("TRAVIS") != null) {
+                args("~/ccache/ccache-gcc")
+            }
             // Add in any additional compilation params
             if (params != null) {
                 // A little hack. Only use the -std=c99 flag if compiling .c or .m
