@@ -25,4 +25,4 @@ if [[ "${TRAVIS_OS_NAME}" == linux ]]; then
   ccache_wrapper g++
 fi
 
-export PATH="$HOME/ccache:$PATH"
+eval echo "~"
