@@ -61,11 +61,11 @@ final class WinRobot extends GlassRobot {
     }
 
 
-    native protected void _mouseMove(int x, int y);
+    native protected void _mouseMove(float x, float y);
     @Override
     public void mouseMove(double x, double y) {
         Application.checkEventThread();
-        _mouseMove((int) x, (int) y);
+        _mouseMove((float) x, (float) y);
     }
 
     native protected void _mousePress(int buttons);

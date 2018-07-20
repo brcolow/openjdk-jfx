@@ -96,13 +96,13 @@ JNIEXPORT void JNICALL Java_com_sun_glass_ui_win_WinRobot__1keyRelease
 /*
  * Class:     com_sun_glass_ui_win_WinRobot
  * Method:    _mouseMove
- * Signature: (II)V
+ * Signature: (FF)V
  */
 JNIEXPORT void JNICALL Java_com_sun_glass_ui_win_WinRobot__1mouseMove
-    (JNIEnv *env, jobject jrobot, jint x, jint y)
+    (JNIEnv *env, jobject jrobot, jfloat x, jfloat y)
 {
-    jfloat fx = (jfloat) x + 0.5f;
-    jfloat fy = (jfloat) y + 0.5f;
+    jfloat fx = x + 0.5f;
+    jfloat fy = y + 0.5f;
     GlassScreen::FX2Win(&fx, &fy);
     INPUT mouseInput = {0};
     mouseInput.type = INPUT_MOUSE;
