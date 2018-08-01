@@ -284,7 +284,12 @@ public class DWGlyph implements Glyph {
 
     IWICBitmap createBitmap(int width, int height) {
         IWICImagingFactory factory = DWFactory.getWICFactory();
-        return  factory.CreateBitmap(width, height, BITMAP_PIXEL_FORMAT, OS.WICBitmapCacheOnDemand);
+        System.out.println("Calling createBitmap with args:");
+        System.out.println("width: " + width);
+        System.out.println("height: " + height);
+        System.out.println("BITMAP_PIXEL_FORMAT: " + BITMAP_PIXEL_FORMAT);
+        System.out.println("OS.WICBitmapCacheOnDemand: " + OS.WICBitmapCacheOnDemand);
+        return factory.CreateBitmap(width, height, BITMAP_PIXEL_FORMAT, OS.WICBitmapCacheOnDemand);
     }
 
     ID2D1RenderTarget createRenderingTarget(IWICBitmap bitmap) {

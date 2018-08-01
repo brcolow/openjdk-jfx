@@ -33,6 +33,7 @@ WIN.compileSWT = true;
 WIN.compileFXPackager = true;
 
 WIN.includeNull3d = true
+WIN.includeMonocle = true
 
 // Lambda for naming the generated libs
 WIN.library = { name -> return "${name}.dll" as String }
@@ -65,7 +66,7 @@ setupTools("windows_tools",
         }
     },
     { properties ->
-        defineProperty("WINDOWS_VS_VSINSTALLDIR", properties, "c:/Program Files (x86)/Microsoft Visual Studio/2017/Professional");
+        defineProperty("WINDOWS_VS_VSINSTALLDIR", properties, "c:/Program Files (x86)/Microsoft Visual Studio/2017/Community");
         defineProperty("WINDOWS_VS_WINSDKDLLINSTALLDIR", properties, "c:/Program Files (x86)/Windows Kits/10/Redist/ucrt/DLLs");
         defineProperty("WINDOWS_SDK_DIR", properties, System.getenv().get("WINSDK_DIR"))
         defineProperty("WINDOWS_SDK_VERSION", properties, "")
@@ -89,6 +90,7 @@ setupTools("windows_tools",
     }
 )
 
+def WINDOWS_SDK_DIR = "C:/Program Files (x86)/Windows Kits/10"
 if (WINDOWS_SDK_DIR == null || WINDOWS_SDK_DIR == "") {
     throw new GradleException("FAIL: WINSDK_DIR not defined");
 }

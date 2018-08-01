@@ -627,7 +627,7 @@ final class SWGraphics implements ReadbackGraphics {
     private void drawGlyph(FontStrike strike, GlyphList gl, int idx, BaseTransform glyphTx,
                            boolean drawAsMasks, float x, float y)
     {
-
+        System.out.println("Inside SWGraphics, drawGlyph");
         final Glyph g = strike.getGlyph(gl.getGlyphCode(idx));
         if (drawAsMasks) {
             final Point2D pt = new Point2D((float)(x + tx.getMxt() + gl.getPosX(idx)),

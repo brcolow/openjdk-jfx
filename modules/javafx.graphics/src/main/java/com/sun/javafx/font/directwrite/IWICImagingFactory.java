@@ -31,6 +31,8 @@ class IWICImagingFactory extends IUnknown {
     }
 
     IWICBitmap CreateBitmap(int uiWidth, int uiHeight, int pixelFormat, int options) {
+        System.out.println("Calling native CreateBitmap, uiWidth = " + uiWidth + ", uiHeight = " +
+                uiHeight + ", pixelFormat = " + pixelFormat + ", options = " + options);
         long result = OS.CreateBitmap(ptr, uiWidth, uiHeight, pixelFormat, options);
         return result != 0 ? new IWICBitmap(result) : null;
     }

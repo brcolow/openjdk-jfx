@@ -2339,7 +2339,7 @@ JNIEXPORT jint JNICALL OS_NATIVE(Draw)
 JNIEXPORT jlong JNICALL OS_NATIVE(CreateBitmap)
     (JNIEnv *env, jclass that, jlong arg0, jint arg1, jint arg2, jint arg3, jint arg4)
 {
-
+    fprintf(stderr, "CreateBitmap (arg1 = %d, arg2 = %d, arg3 = %d, arg4 = %d)", arg1, arg2, arg3, arg4);
     IWICBitmap* result = NULL;
     GUID pixelFormat;
     switch (arg3) {
@@ -2355,6 +2355,7 @@ JNIEXPORT jlong JNICALL OS_NATIVE(CreateBitmap)
     case com_sun_javafx_font_directwrite_OS_GUID_WICPixelFormat32bppRGBA: pixelFormat = GUID_WICPixelFormat32bppRGBA; break;
     case com_sun_javafx_font_directwrite_OS_GUID_WICPixelFormat32bppPRGBA: pixelFormat = GUID_WICPixelFormat32bppPRGBA; break;
     }
+
     HRESULT hr = ((IWICImagingFactory *)arg0)->CreateBitmap(arg1, arg2, (REFWICPixelFormatGUID)pixelFormat, (WICBitmapCreateCacheOption)arg4, &result);
     return SUCCEEDED(hr) ? (jlong)result : NULL;
 }
