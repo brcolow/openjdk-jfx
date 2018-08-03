@@ -31,7 +31,9 @@ class ID2D1Factory extends IUnknown {
     }
 
     ID2D1RenderTarget CreateWicBitmapRenderTarget(IWICBitmap target, D2D1_RENDER_TARGET_PROPERTIES renderTargetProperties) {
+        System.out.println("Inside ID2D1Factory.CreateWicBitmapRenderTarget");
         long result = OS.CreateWicBitmapRenderTarget(ptr, target.ptr, renderTargetProperties);
+        System.out.println("result: " + result);
         return result != 0 ? new ID2D1RenderTarget(result) : null;
     }
 }

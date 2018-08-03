@@ -439,6 +439,7 @@ WIN.font.javahInclude = [
         "com/sun/javafx/text/**/*"]
 WIN.font.nativeSource = [file("${project("graphics").projectDir}/src/main/native-font")]
 WIN.font.compiler = compiler
+// What about using the actual _WIN32_WINNT of the PC were compiling on?
 WIN.font.ccFlags = ["/DJFXFONT_PLUS", "/D_WIN32_WINNT=0x0601", ccFlags].flatten()
 WIN.font.ccFlags -= ["/DUNICODE", "/D_UNICODE"]
 WIN.font.linker = linker

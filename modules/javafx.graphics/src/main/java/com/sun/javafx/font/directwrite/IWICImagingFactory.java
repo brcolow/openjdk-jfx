@@ -28,12 +28,14 @@ package com.sun.javafx.font.directwrite;
 class IWICImagingFactory extends IUnknown {
     IWICImagingFactory(long ptr) {
         super(ptr);
+        System.out.println("IWICImagingFactory ctor, ptr is: " + ptr);
     }
 
     IWICBitmap CreateBitmap(int uiWidth, int uiHeight, int pixelFormat, int options) {
         System.out.println("Calling native CreateBitmap, uiWidth = " + uiWidth + ", uiHeight = " +
                 uiHeight + ", pixelFormat = " + pixelFormat + ", options = " + options);
         long result = OS.CreateBitmap(ptr, uiWidth, uiHeight, pixelFormat, options);
+        System.out.println("result: " + result);
         return result != 0 ? new IWICBitmap(result) : null;
     }
 }

@@ -31,6 +31,7 @@
 #include <wincodec.h>
 #include <vector>
 #include <new>
+#include <assert.h>
 
 #include <com_sun_javafx_font_directwrite_OS.h>
 
@@ -848,27 +849,39 @@ jobject newD2D1_MATRIX_3X2_F(JNIEnv *env, D2D1_MATRIX_3X2_F *lpStruct)
 JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
     (JNIEnv *env, jclass that)
 {
+    fprintf(stderr, "Inside OS_NATIVE(_1WICCreateImagingFactory)");
     /* This routine initialize COM in order to create an WICImagingFactory.
      * It runs on the prism thread and expects no other codes in this thread
      * to interface with COM.
      * Note: This method is called by DWFactory a single time.
      */
     HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+    assert(SUCCEEDED(hr));
 
     /* This means COM has been initialize with a different concurrency model.
      * This should never happen. */
     if (hr == RPC_E_CHANGED_MODE) return NULL;
 
+    fprintf(stderr, "Creating IWICImagingFactory using CoCreateInstance");
     IWICImagingFactory* result = NULL;
     hr = CoCreateInstance(
-            CLSID_WICImagingFactory,
+            CLSID_WICImagingFactory1,
             NULL,
             CLSCTX_INPROC_SERVER,
             IID_PPV_ARGS(&result)
             );
-
+    if (hr == REGDB_E_CLASSNOTREG) {
+        hr = CoCreateInstance(
+                CLSID_WICImagingFactory,
+                NULL,
+                CLSCTX_INPROC_SERVER,
+                IID_PPV_ARGS(&result)
+                );
+    }
+    assert(SUCCEEDED(hr));
     /* Unload COM as no other COM objects will be create directly */
-    CoUninitialize();
+    // CoUninitialize();
+    fprintf(stderr, "result = %ld", (jlong)result);
     return SUCCEEDED(hr) ? (jlong)result : NULL;
 }
 
@@ -2157,6 +2170,7 @@ JNIEXPORT jlong JNICALL OS_NATIVE(GetFontFromFontFace)
 JNIEXPORT jbyteArray JNICALL OS_NATIVE(CreateAlphaTexture)
     (JNIEnv *env, jclass that, jlong arg0, jint arg1, jobject arg2)
 {
+    fprintf(stderr, "Inside OS_NATIVE(CreateAlphaTexture)");
     jbyteArray result = NULL;
     RECT _arg2, *lparg2 = NULL;
     /* In Only */
@@ -2339,7 +2353,7 @@ JNIEXPORT jint JNICALL OS_NATIVE(Draw)
 JNIEXPORT jlong JNICALL OS_NATIVE(CreateBitmap)
     (JNIEnv *env, jclass that, jlong arg0, jint arg1, jint arg2, jint arg3, jint arg4)
 {
-    fprintf(stderr, "CreateBitmap (arg1 = %d, arg2 = %d, arg3 = %d, arg4 = %d)", arg1, arg2, arg3, arg4);
+    fprintf(stderr, "CreateBitmap (arg0 = %ld, arg1 = %d, arg2 = %d, arg3 = %d, arg4 = %d)", arg0, arg1, arg2, arg3, arg4);
     IWICBitmap* result = NULL;
     GUID pixelFormat;
     switch (arg3) {
@@ -2409,6 +2423,7 @@ JNIEXPORT jlong JNICALL OS_NATIVE(CreateWicBitmapRenderTarget)
 fail:
     return SUCCEEDED(hr) ? (jlong)result : NULL;
 }
+
 
 /*ID2D1RenderTarget*/
 JNIEXPORT void JNICALL OS_NATIVE(BeginDraw)

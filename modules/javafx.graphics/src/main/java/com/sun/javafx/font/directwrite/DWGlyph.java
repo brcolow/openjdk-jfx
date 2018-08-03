@@ -25,6 +25,8 @@
 
 package com.sun.javafx.font.directwrite;
 
+import java.util.Arrays;
+
 import com.sun.javafx.font.FontResource;
 import com.sun.javafx.font.Glyph;
 import com.sun.javafx.font.PrismFontFactory;
@@ -125,20 +127,30 @@ public class DWGlyph implements Glyph {
     }
 
     byte[] getLCDMask(float subPixelX, float subPixelY) {
+        System.out.println("Inside DWGlyph.getLCDMask");
         IDWriteGlyphRunAnalysis runAnalysis = createAnalysis(subPixelX, subPixelY);
         byte[] buffer = null;
         if (runAnalysis != null) {
+            System.out.println("runAnalysis was non-null");
             int textureType = OS.DWRITE_TEXTURE_CLEARTYPE_3x1;
+            System.out.println("calling getAlphaTextureBounds with texture type OS.DWRITE_TEXTURE_CLEARTYPE_3x1 = " + OS.DWRITE_TEXTURE_CLEARTYPE_3x1);
             rect = runAnalysis.GetAlphaTextureBounds(textureType);
+            System.out.println("rect after calling getAlphaTextureBounds: " + rect);
             if (rect != null && rect.right - rect.left != 0 && rect.bottom - rect.top != 0) {
+                System.out.println("setting buffer without calling getD2DMask");
                 buffer = runAnalysis.CreateAlphaTexture(textureType, rect);
+                System.out.println("buffer after calling getD2DMask: " + Arrays.toString(buffer));
             } else {
                 /* In some cases IDWriteGlyphRunAnalysis is unable to produce
                  * LCD masks. But as long as the size can determined D2D can be
                  * used to do the rendering. */
+                System.out.println("calling getAlphaTextureBounds with texture type OS.DWRITE_TEXTURE_ALIASED_1x1 = " + OS.DWRITE_TEXTURE_ALIASED_1x1);
                 rect = runAnalysis.GetAlphaTextureBounds(OS.DWRITE_TEXTURE_ALIASED_1x1);
+                System.out.println("rect after calling getAlphaTextureBounds: " + rect);
                 if (rect != null && rect.right - rect.left != 0 && rect.bottom - rect.top != 0) {
+                    System.out.println("setting buffer by calling getD2DMask");
                     buffer = getD2DMask(subPixelX, subPixelY, true);
+                    System.out.println("buffer after calling getD2DMask: " + Arrays.toString(buffer));
                 }
             }
             runAnalysis.Release();
@@ -151,6 +163,7 @@ public class DWGlyph implements Glyph {
     }
 
     byte[] getD2DMask(float subPixelX, float subPixelY, boolean lcd) {
+        System.out.println("Inside DWGlyph.getD2DMask");
         checkBounds();
         if (getWidth() == 0 || getHeight() == 0 || run.fontFace == 0) {
             return new byte[0];
@@ -257,8 +270,11 @@ public class DWGlyph implements Glyph {
     }
 
     IDWriteGlyphRunAnalysis createAnalysis(float x, float y) {
+        System.out.println("Inside DWGlyph.createAnalysis");
         if (run.fontFace == 0) return null;
+        System.out.println("Trying to get dwrite factory");
         IDWriteFactory factory = DWFactory.getDWriteFactory();
+        System.out.println("factory: " + factory);
         int renderingMode = DWFontStrike.SUBPIXEL_Y ?
                             OS.DWRITE_RENDERING_MODE_NATURAL_SYMMETRIC :
                             OS.DWRITE_RENDERING_MODE_NATURAL;
@@ -269,7 +285,9 @@ public class DWGlyph implements Glyph {
     }
 
     IWICBitmap getCachedBitmap() {
+        System.out.println("inside getCachedBitmap");
         if (cachedBitmap == null) {
+            System.out.println("cachedBitmap was null, so calling createBitmap");
             cachedBitmap = createBitmap(BITMAP_WIDTH, BITMAP_HEIGHT);
         }
         return cachedBitmap;
@@ -283,7 +301,9 @@ public class DWGlyph implements Glyph {
     }
 
     IWICBitmap createBitmap(int width, int height) {
+        System.out.println("DWGlyph.createBitmap(..)");
         IWICImagingFactory factory = DWFactory.getWICFactory();
+        System.out.println("factory: " + factory);
         System.out.println("Calling createBitmap with args:");
         System.out.println("width: " + width);
         System.out.println("height: " + height);
@@ -293,6 +313,7 @@ public class DWGlyph implements Glyph {
     }
 
     ID2D1RenderTarget createRenderingTarget(IWICBitmap bitmap) {
+        System.out.println("Inside DWGlyph.createRenderingTarget");
         D2D1_RENDER_TARGET_PROPERTIES prop = new D2D1_RENDER_TARGET_PROPERTIES();
         /* All values set to defaults */
         prop.type = OS.D2D1_RENDER_TARGET_TYPE_DEFAULT;
@@ -302,6 +323,7 @@ public class DWGlyph implements Glyph {
         prop.dpiY = 0;
         prop.usage = OS.D2D1_RENDER_TARGET_USAGE_NONE;
         prop.minLevel = OS.D2D1_FEATURE_LEVEL_DEFAULT;
+        System.out.println("Trying to get factory");
         ID2D1Factory factory = DWFactory.getD2DFactory();
         return factory.CreateWicBitmapRenderTarget(bitmap, prop);
     }
@@ -353,6 +375,7 @@ public class DWGlyph implements Glyph {
             }
             if (index == 1) x = 0.33f;
             if (index == 2) x = 0.66f;
+            System.out.println("Inside DWGlyph.getPixelData, checking if glyph is LCD or not: " + isLCDGlyph());
             pixelData[subPixel] = data = isLCDGlyph() ? getLCDMask(x, y) :
                                                         getD2DMask(x, y, false);
             rects[subPixel] = rect;
@@ -400,6 +423,9 @@ public class DWGlyph implements Glyph {
 
     @Override
     public boolean isLCDGlyph() {
+        System.out.println("Inside DWGlyph.isLCDGlyph, checking strike.getAAMode(): " + strike.getAAMode());
+        System.out.println("FontResource.AA_LCD = " + FontResource.AA_LCD);
+        System.out.println("equals? " + (strike.getAAMode() == FontResource.AA_LCD));
         return strike.getAAMode() == FontResource.AA_LCD;
     }
 

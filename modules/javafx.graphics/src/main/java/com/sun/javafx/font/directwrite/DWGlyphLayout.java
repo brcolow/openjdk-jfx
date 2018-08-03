@@ -90,6 +90,7 @@ public class DWGlyphLayout extends GlyphLayout {
         IDWriteFontFace face = ((DWFontFile)fr).getFontFace();
         if (face == null) return;
 
+        System.out.println("Inside DWGlyphLayout.layout");
         IDWriteFactory factory = DWFactory.getDWriteFactory();
         IDWriteTextAnalyzer analyzer = factory.CreateTextAnalyzer();
         if (analyzer == null) return;
@@ -336,6 +337,8 @@ public class DWGlyphLayout extends GlyphLayout {
 
         /* zero is not a valid size for IDWriteTextFormat */
         float fontsize = size > 0 ? size : 1;
+
+        System.out.println("Inside DWGlyphLayout.renderShape");
 
         IDWriteFactory factory = DWFactory.getDWriteFactory();
         /* Note this collection is not correct for embedded fonts,

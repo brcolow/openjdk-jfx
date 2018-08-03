@@ -31,6 +31,7 @@ class IDWriteGlyphRunAnalysis extends IUnknown {
     }
 
     byte[] CreateAlphaTexture(int textureType, RECT textureBounds) {
+        System.out.println("Inside IDWriteGlyphRunAnalysis.CreateAlphaTexture, textureType = " + textureType);
         return OS.CreateAlphaTexture(ptr, textureType, textureBounds);
     }
 

@@ -159,19 +159,24 @@ class OS {
     /* Constructors */
     private static final native long _DWriteCreateFactory(int factoryType);
     static final IDWriteFactory DWriteCreateFactory(int factoryType) {
+        System.out.println("Inside OS.DWriteCreateFactory");
         long ptr = _DWriteCreateFactory(factoryType);
         return ptr != 0 ? new IDWriteFactory(ptr) : null;
     }
 
     private static final native long _D2D1CreateFactory(int factoryType);
     static final ID2D1Factory D2D1CreateFactory(int factoryType) {
+        System.out.println("Inside OS.D2D1CreateFactory");
         long ptr = _D2D1CreateFactory(factoryType);
         return ptr != 0 ? new ID2D1Factory(ptr) : null;
     }
 
     private static final native long _WICCreateImagingFactory();
     static final IWICImagingFactory WICCreateImagingFactory() {
+        System.out.println("Inside WICCreateImagingFactory");
+        System.out.println("Calling native _WICCreateImagingFactory");
         long ptr = _WICCreateImagingFactory();
+        System.out.println("ptr result: " + ptr);
         return ptr != 0 ? new IWICImagingFactory(ptr) : null;
     }
 

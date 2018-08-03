@@ -39,6 +39,7 @@ public class DWFactory extends PrismFontFactory {
     private static Thread d2dThread;
 
     public static PrismFontFactory getFactory() {
+        System.out.println("Inside DWFactory.getFactory");
         /* DirectWrite is not available on Windows Vista SP2 (JFX minimal
          * requirement on Windows) without 'Platform Update'.
          * To workaround this limitation this method first checks if a
@@ -47,10 +48,12 @@ public class DWFactory extends PrismFontFactory {
          * not support DirectWrite.
          */
         if (getDWriteFactory() == null) {
+            System.out.println("getDWriteFactory() returned null, so returning null");
             /* Returning null here indicates to the PrismFontFactory
              * to throw an Error . */
             return null;
         }
+        System.out.println("Returning new DWFactory");
         return new DWFactory();
     }
 
@@ -86,10 +89,16 @@ public class DWFactory extends PrismFontFactory {
     }
 
     static IDWriteFactory getDWriteFactory() {
+        System.out.println("Inside DWFactory.getDWriteFactory");
         /* Using multi threaded DWrite factory as the JFX thread requires access
          * to DWrite resources for measuring and the Prism thread for rendering */
         if (DWRITE_FACTORY == null) {
+            System.out.println("DWRITE_FACTORY was null, so creating it");
             DWRITE_FACTORY = OS.DWriteCreateFactory(OS.DWRITE_FACTORY_TYPE_SHARED);
+            if (DWRITE_FACTORY == null) {
+                throw new NullPointerException("could not initialize DWRITE_FACTORY");
+            }
+            System.out.println("initialized DWRITE_FACTORY");
         }
         return DWRITE_FACTORY;
     }
@@ -106,7 +115,10 @@ public class DWFactory extends PrismFontFactory {
          * hand it over to some other thread. This would be a programming error
          * and it is not check by this implementation. */
         Thread current = Thread.currentThread();
+        System.out.println("Inside DWGlyph.checkThread");
+        System.out.println("Checking if d2dThread is null: " + d2dThread);
         if (d2dThread == null) {
+            System.out.println("d2dThread was null, so setting d2dThread to current thread: " + current.getName());
             d2dThread = current;
         }
         if (d2dThread != current) {
@@ -117,19 +129,29 @@ public class DWFactory extends PrismFontFactory {
     }
 
     static synchronized IWICImagingFactory getWICFactory() {
+        System.out.println("Inside DWFactory.getWICFactory");
         checkThread();
         /* Using single threaded WIC Factory as it should only be used by the rendering thread */
         if (WIC_FACTORY == null) {
+            System.out.println("WIC_FACTORY was null so creating it");
             WIC_FACTORY = OS.WICCreateImagingFactory();
+            if (WIC_FACTORY == null) {
+                throw new NullPointerException("could not create WIC_FACTORY");
+            }
         }
         return WIC_FACTORY;
     }
 
     static synchronized ID2D1Factory getD2DFactory() {
+        System.out.println("Inside DWFactory.getD2DFactory");
         checkThread();
         /* Using single threaded D2D Factory as it should only be used by the rendering thread */
         if (D2D_FACTORY == null) {
+            System.out.println("D2D_FACTORY was null so creating it");
             D2D_FACTORY = OS.D2D1CreateFactory(OS.D2D1_FACTORY_TYPE_SINGLE_THREADED);
+            if (D2D_FACTORY == null) {
+                throw new NullPointerException("could not create D2D_FACTORY");
+            }
         }
         return D2D_FACTORY;
     }

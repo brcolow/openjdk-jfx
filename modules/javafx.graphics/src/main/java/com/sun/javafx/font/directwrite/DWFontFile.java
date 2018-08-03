@@ -56,6 +56,7 @@ class DWFontFile extends PrismFontFile {
     }
 
     private IDWriteFontFace createEmbeddedFontFace() {
+        System.out.println("Inside DWFontFile.createEmbeddedFontFace");
         IDWriteFactory factory = DWFactory.getDWriteFactory();
         IDWriteFontFile fontFile = factory.CreateFontFileReference(getFileName());
         if (fontFile == null) return null;
