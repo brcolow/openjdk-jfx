@@ -29,6 +29,7 @@
 #include <dwrite.h>
 #include <d2d1.h>
 #include <wincodec.h>
+#include <assert.h>
 #include <vector>
 #include <new>
 
@@ -854,6 +855,7 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
      * Note: This method is called by DWFactory a single time.
      */
     HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+    assert(SUCCEEDED(hr));
 
     /* This means COM has been initialize with a different concurrency model.
      * This should never happen. */
@@ -861,14 +863,23 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
 
     IWICImagingFactory* result = NULL;
     hr = CoCreateInstance(
-            CLSID_WICImagingFactory,
+            CLSID_WICImagingFactory1,
             NULL,
             CLSCTX_INPROC_SERVER,
             IID_PPV_ARGS(&result)
             );
+    if (hr == REGDB_E_CLASSNOTREG) {
+        hr = CoCreateInstance(
+                CLSID_WICImagingFactory,
+                NULL,
+                CLSCTX_INPROC_SERVER,
+                IID_PPV_ARGS(&result)
+                );
+    }
+    assert(SUCCEEDED(hr));
 
     /* Unload COM as no other COM objects will be create directly */
-    CoUninitialize();
+    // CoUninitialize();
     return SUCCEEDED(hr) ? (jlong)result : NULL;
 }
 
