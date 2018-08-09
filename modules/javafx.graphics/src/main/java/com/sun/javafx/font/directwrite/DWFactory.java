@@ -106,7 +106,9 @@ public class DWFactory extends PrismFontFactory {
          * hand it over to some other thread. This would be a programming error
          * and it is not check by this implementation. */
         Thread current = Thread.currentThread();
+        System.out.println("inside checkThread, current thread: " + current.getName());
         if (d2dThread == null) {
+            System.out.println("d2dThread was null, so setting it to current");
             d2dThread = current;
         }
         if (d2dThread != current) {
@@ -117,6 +119,7 @@ public class DWFactory extends PrismFontFactory {
     }
 
     static synchronized IWICImagingFactory getWICFactory() {
+        System.out.println("inside getWICFactory, checking thread");
         checkThread();
         /* Using single threaded WIC Factory as it should only be used by the rendering thread */
         if (WIC_FACTORY == null) {
