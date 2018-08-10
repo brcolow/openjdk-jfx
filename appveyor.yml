@@ -33,7 +33,7 @@ build_script:
       $env:VSVARS32FILE = "$env:VCINSTALLDIR\vcvars32.bat"
       refreshenv
       # Must invoke gradle with cmd.exe so stderr output doesn't fail the build:
-  - cmd: gradlew all test -PCOMPILE_WEBKIT=false -PCONF=DebugNative -PFULL_TEST=true -PUSE_ROBOT=true -PHEADLESS_TEST=true -PUNSTABLE_TEST=true --stacktrace -x :web:test --info --no-daemon # -PHEADLESS_TEST=true
+  - cmd: gradlew all test -PCOMPILE_WEBKIT=false -PCONF=DebugNative -PFULL_TEST=true -PUSE_ROBOT=true -PUNSTABLE_TEST=true --stacktrace -x :web:test --info --no-daemon # -PHEADLESS_TEST=true
 
 on_finish:
   - ps: |
