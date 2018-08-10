@@ -848,8 +848,8 @@ public:
     operator HRESULT() const { return m_hr; }
     HRESULT operator= (HRESULT hr) {
         assert(hr == S_OK);
-        m_HR = hr;
-        return m_HR;
+        m_hr = hr;
+        return m_hr;
     }
     HRESULT m_hr;
 };
@@ -873,8 +873,8 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
     /* This means COM has been initialize with a different concurrency model.
      * This should never happen. */
     if (HRESULT(hr) == RPC_E_CHANGED_MODE) return NULL;
+    IWICImagingFactory* result = NULL;
     if (SUCCEEDED(hr)) {
-        IWICImagingFactory* result = NULL;
         hr = CoCreateInstance(
                 CLSID_WICImagingFactory1,
                 NULL,
