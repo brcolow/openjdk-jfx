@@ -859,6 +859,7 @@ public:
 /*                            Functions                                   */
 /*                                                                        */
 /**************************************************************************/
+IWICImagingFactory* result = NULL;
 
 JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
     (JNIEnv *env, jclass that)
@@ -868,14 +869,15 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
      * to interface with COM.
      * Note: This method is called by DWFactory a single time.
      */
-    IWICImagingFactory* result = NULL;
     HRESULT hr = CoInitialize(NULL); {
-        /* This means COM has been initialize with a different concurrency model.
+        /* This means COM has been initialized with a different concurrency model.
         * This should never happen. */
         if (hr == RPC_E_CHANGED_MODE) return NULL;
-        hr = CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER,  IID_PPV_ARGS(&result));
+        hr = CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&result));
     }
-    CoUninitialize();
+    if (SUCCEEDED(hr)) {
+        CoUninitialize();
+    }
     return SUCCEEDED(hr) ? (jlong)result : NULL;
 }
 
