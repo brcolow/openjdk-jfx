@@ -843,7 +843,7 @@ jobject newD2D1_MATRIX_3X2_F(JNIEnv *env, D2D1_MATRIX_3X2_F *lpStruct)
 
 class CCoInitialize {
 public:
-    CCoInitialize() : m_hr(CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE)) { }
+    CCoInitialize() : m_hr(CoInitializeEx(NULL, COINIT_MULTITHREADED | COINIT_DISABLE_OLE1DDE)) { }
     ~CCoInitialize() { if (SUCCEEDED(m_hr)) CoUninitialize(); }
     operator HRESULT() const { return m_hr; }
     HRESULT operator= (HRESULT hr) {
