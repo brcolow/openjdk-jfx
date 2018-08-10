@@ -876,7 +876,7 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
         hr = CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&result));
     }
     if (SUCCEEDED(hr)) {
-        CoUninitialize();
+        // CoUninitialize();
     }
     return SUCCEEDED(hr) ? (jlong)result : NULL;
 }
