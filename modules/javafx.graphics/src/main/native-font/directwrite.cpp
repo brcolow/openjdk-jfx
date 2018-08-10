@@ -843,9 +843,14 @@ jobject newD2D1_MATRIX_3X2_F(JNIEnv *env, D2D1_MATRIX_3X2_F *lpStruct)
 
 class CCoInitialize {
 public:
-    CCoInitialize() : m_hr(CoInitializeEx(COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE)) { }
+    CCoInitialize() : m_hr(CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE)) { }
     ~CCoInitialize() { if (SUCCEEDED(m_hr)) CoUninitialize(); }
     operator HRESULT() const { return m_hr; }
+    HRESULT operator= (HRESULT hr) {
+        assert(hr == S_OK);
+        m_HR = hr;
+        return m_HR;
+    }
     HRESULT m_hr;
 };
 
@@ -867,8 +872,8 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
 
     /* This means COM has been initialize with a different concurrency model.
      * This should never happen. */
-    if (hr == RPC_E_CHANGED_MODE) return NULL;
-    if (SUCCEEDED(init)) {
+    if (HRESULT(hr) == RPC_E_CHANGED_MODE) return NULL;
+    if (SUCCEEDED(hr)) {
         IWICImagingFactory* result = NULL;
         hr = CoCreateInstance(
                 CLSID_WICImagingFactory1,
