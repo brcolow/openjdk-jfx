@@ -72,6 +72,7 @@ public class DWFactory extends PrismFontFactory {
 
     @Override
     protected boolean registerEmbeddedFont(String path) {
+        System.out.println("DWFactory.registerEmbeddedFont");
         IDWriteFactory factory = DWFactory.getDWriteFactory();
         IDWriteFontFile fontFile = factory.CreateFontFileReference(path);
         if (fontFile == null) return false;
@@ -96,6 +97,7 @@ public class DWFactory extends PrismFontFactory {
 
     static IDWriteFontCollection getFontCollection() {
         if (FONT_COLLECTION == null) {
+            System.out.println("DWFactory.getFontCollection");
             FONT_COLLECTION = getDWriteFactory().GetSystemFontCollection(false);
         }
         return FONT_COLLECTION;

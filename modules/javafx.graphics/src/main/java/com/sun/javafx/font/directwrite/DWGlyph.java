@@ -258,6 +258,7 @@ public class DWGlyph implements Glyph {
 
     IDWriteGlyphRunAnalysis createAnalysis(float x, float y) {
         if (run.fontFace == 0) return null;
+        System.out.println("DWGlyph.createAnalysis");
         IDWriteFactory factory = DWFactory.getDWriteFactory();
         int renderingMode = DWFontStrike.SUBPIXEL_Y ?
                             OS.DWRITE_RENDERING_MODE_NATURAL_SYMMETRIC :
