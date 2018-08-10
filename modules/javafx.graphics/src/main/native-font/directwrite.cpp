@@ -868,20 +868,14 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
      * to interface with COM.
      * Note: This method is called by DWFactory a single time.
      */
-    CCoInitialize hr;
-
-    /* This means COM has been initialize with a different concurrency model.
-     * This should never happen. */
-    if (HRESULT(hr) == RPC_E_CHANGED_MODE) return NULL;
     IWICImagingFactory* result = NULL;
-    if (SUCCEEDED(hr)) {
-        hr = CoCreateInstance(
-                CLSID_WICImagingFactory1,
-                NULL,
-                CLSCTX_INPROC_SERVER,
-                IID_PPV_ARGS(&result)
-                );
+    HRESULT hr = CoInitialize(NULL); {
+        /* This means COM has been initialize with a different concurrency model.
+        * This should never happen. */
+        if (hr == RPC_E_CHANGED_MODE) return NULL;
+        hr = CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER,  IID_PPV_ARGS(&result));
     }
+    CoUninitialize();
     return SUCCEEDED(hr) ? (jlong)result : NULL;
 }
 
