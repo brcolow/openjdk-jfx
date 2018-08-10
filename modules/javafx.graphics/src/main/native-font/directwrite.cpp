@@ -924,12 +924,14 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1DWriteCreateFactory)
 JNIEXPORT jint JNICALL OS_NATIVE(AddRef)
     (JNIEnv *env, jclass that, jlong arg0)
 {
+    fprintf(stderr, "Calling native AddRef on arg0: %ld", arg0);
     return ((IUnknown *)arg0)->AddRef();
 }
 
 JNIEXPORT jint JNICALL OS_NATIVE(Release)
     (JNIEnv *env, jclass that, jlong arg0)
 {
+    fprintf(stderr, "Calling native Release on arg0: %ld", arg0);
     return ((IUnknown *)arg0)->Release();
 }
 
@@ -2348,7 +2350,10 @@ JNIEXPORT jint JNICALL OS_NATIVE(Draw)
 JNIEXPORT jlong JNICALL OS_NATIVE(CreateBitmap)
     (JNIEnv *env, jclass that, jlong arg0, jint arg1, jint arg2, jint arg3, jint arg4)
 {
-
+    if (((IWICImagingFactory *)arg0) == NULL) {
+        fprintf(stderr, "Inside native CreateBitmap, arg0 as IWICImagingFactory was NULL");
+    }
+    fprintf(stderr, "Inside CreateBitmap, arg0 is: %ld", arg0);
     IWICBitmap* result = NULL;
     GUID pixelFormat;
     switch (arg3) {

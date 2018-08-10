@@ -151,6 +151,7 @@ public class DWGlyph implements Glyph {
     }
 
     byte[] getD2DMask(float subPixelX, float subPixelY, boolean lcd) {
+        System.out.println("DWGlyph.getD2D mask, subPixelX = " + subPixelX + ", subPixelY = " + subPixelY + ", lcd = " + lcd);
         checkBounds();
         if (getWidth() == 0 || getHeight() == 0 || run.fontFace == 0) {
             return new byte[0];
@@ -161,13 +162,16 @@ public class DWGlyph implements Glyph {
         int w = rect.right - rect.left;
         int h = rect.bottom - rect.top;
         boolean cache = CACHE_TARGET && BITMAP_WIDTH >= w && BITMAP_HEIGHT >= h;
+        System.out.println("cache: " + cache);
         IWICBitmap bitmap;
         ID2D1RenderTarget target;
         if (cache) {
             bitmap = getCachedBitmap();
             target = getCachedRenderingTarget();
         } else {
+            System.out.println("calling create bitmap, w = " + w + ", h = " + h);
             bitmap = createBitmap(w, h);
+            System.out.println("Calling create rendering target with bitmap: " + bitmap);
             target = createRenderingTarget(bitmap);
         }
         if (bitmap == null || target == null) {
@@ -285,6 +289,7 @@ public class DWGlyph implements Glyph {
 
     IWICBitmap createBitmap(int width, int height) {
         IWICImagingFactory factory = DWFactory.getWICFactory();
+        System.out.println("IWICImaging factory: " + factory);
         return  factory.CreateBitmap(width, height, BITMAP_PIXEL_FORMAT, OS.WICBitmapCacheOnDemand);
     }
 

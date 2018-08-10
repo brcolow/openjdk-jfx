@@ -30,18 +30,30 @@ class IUnknown {
 
     IUnknown(long ptr) {
         this.ptr = ptr;
+        System.out.println("IUnknown ctor, ptr = " + ptr);
+        System.out.println("this = " + this);
     }
 
     int AddRef() {
-        return OS.AddRef(ptr);
+        System.out.println("IUnknown.AddRef");
+        System.out.println("this = " + this);
+        int result = OS.AddRef(ptr);
+        System.out.println("result: " + result);
+        return result;
     }
 
     int Release() {
+        System.out.println("IUnknown.Release");
+        System.out.println("this = " + this);
         int result = 0;
         if (ptr != 0) {
+            System.out.println("ptr was not 0 so calling release");
             result = OS.Release(ptr);
+            System.out.println("result: " + result);
+            System.out.println("Setting ptr = 0");
             ptr = 0;
         }
+        System.out.println("ptr was 0, returning 0");
         return result;
     }
 }
