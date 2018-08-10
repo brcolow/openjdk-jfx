@@ -131,6 +131,7 @@ public class DWFactory extends PrismFontFactory {
     }
 
     static synchronized ID2D1Factory getD2DFactory() {
+        System.out.println("inside getD2DFactory, checking thread");
         checkThread();
         /* Using single threaded D2D Factory as it should only be used by the rendering thread */
         if (D2D_FACTORY == null) {

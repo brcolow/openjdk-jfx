@@ -289,6 +289,7 @@ public class DWGlyph implements Glyph {
     }
 
     ID2D1RenderTarget createRenderingTarget(IWICBitmap bitmap) {
+        System.out.println("DWGlyph.createRenderingTarget for bitmap: " + bitmap);
         D2D1_RENDER_TARGET_PROPERTIES prop = new D2D1_RENDER_TARGET_PROPERTIES();
         /* All values set to defaults */
         prop.type = OS.D2D1_RENDER_TARGET_TYPE_DEFAULT;
@@ -298,7 +299,9 @@ public class DWGlyph implements Glyph {
         prop.dpiY = 0;
         prop.usage = OS.D2D1_RENDER_TARGET_USAGE_NONE;
         prop.minLevel = OS.D2D1_FEATURE_LEVEL_DEFAULT;
+        System.out.println("getting factory");
         ID2D1Factory factory = DWFactory.getD2DFactory();
+        System.out.println("factory: " + factory);
         return factory.CreateWicBitmapRenderTarget(bitmap, prop);
     }
 
