@@ -858,7 +858,7 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
     IWICImagingFactory* result = NULL;
     /* This means COM has been initialized with a different concurrency model.
     * This should never happen. */
-    hr = CoCreateInstance(CLSID_WICImagingFactory1, NULL, CLSCTX_INPROC_SERVER, __uuidof(IWICImagingFactory), reinterpret_cast<void**>(&result));
+    HRESULT hr = CoCreateInstance(CLSID_WICImagingFactory1, NULL, CLSCTX_INPROC_SERVER, __uuidof(IWICImagingFactory), reinterpret_cast<void**>(&result));
     if (result == NULL) {
         fprintf(stderr, "result was NULL");
     }
