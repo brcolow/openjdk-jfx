@@ -31,6 +31,7 @@ build_script:
       $env:MSVC_VER = $msvcToolsVer
       $env:VS150COMNTOOLS = $env:VCINSTALLDIR
       $env:VSVARS32FILE = "$env:VCINSTALLDIR\vcvars32.bat"
+      $env:_JAVA_OPTIONS="-Dprism.debugfonts=true"
       refreshenv
       # Must invoke gradle with cmd.exe so stderr output doesn't fail the build:
   - cmd: gradlew all test -PCOMPILE_WEBKIT=false -PCONF=DebugNative -PFULL_TEST=true -PUSE_ROBOT=true -PHEADLESS_TEST=true -PUNSTABLE_TEST=true --stacktrace -x :web:test --info --no-daemon # -PHEADLESS_TEST=true
