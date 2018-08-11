@@ -860,7 +860,10 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
         /* This means COM has been initialized with a different concurrency model.
         * This should never happen. */
         if (hr == RPC_E_CHANGED_MODE) return NULL;
-        hr = CoCreateInstance(CLSID_WICImagingFactory1, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&result), reinterpret_cast<void**>(&result));
+        hr = CoCreateInstance(CLSID_WICImagingFactory1, NULL, CLSCTX_INPROC_SERVER, __uuidof(IWICImagingFactory), reinterpret_cast<void**>(&result));
+        if (result == NULL) {
+            fprintf(stderr, "result was NULL");
+        }
     }
     if (SUCCEEDED(hr)) {
         CoUninitialize();
