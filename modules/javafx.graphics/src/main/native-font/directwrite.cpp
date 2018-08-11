@@ -841,19 +841,6 @@ jobject newD2D1_MATRIX_3X2_F(JNIEnv *env, D2D1_MATRIX_3X2_F *lpStruct)
     return lpObject;
 }
 
-class CCoInitialize {
-public:
-    CCoInitialize() : m_hr(CoInitializeEx(NULL, COINIT_MULTITHREADED | COINIT_DISABLE_OLE1DDE)) { }
-    ~CCoInitialize() { if (SUCCEEDED(m_hr)) CoUninitialize(); }
-    operator HRESULT() const { return m_hr; }
-    HRESULT operator= (HRESULT hr) {
-        assert(hr == S_OK);
-        m_hr = hr;
-        return m_hr;
-    }
-    HRESULT m_hr;
-};
-
 /**************************************************************************/
 /*                                                                        */
 /*                            Functions                                   */
@@ -869,14 +856,14 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
      * Note: This method is called by DWFactory a single time.
      */
     IWICImagingFactory* result = NULL;
-    HRESULT hr = CoInitialize(NULL); {
+    HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED); {
         /* This means COM has been initialized with a different concurrency model.
         * This should never happen. */
         if (hr == RPC_E_CHANGED_MODE) return NULL;
-        hr = CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&result));
+        hr = CoCreateInstance(CLSID_WICImagingFactory1, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&result), reinterpret_cast<void**>(&result));
     }
     if (SUCCEEDED(hr)) {
-        // CoUninitialize();
+        CoUninitialize();
     }
     return SUCCEEDED(hr) ? (jlong)result : NULL;
 }
