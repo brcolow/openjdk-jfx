@@ -870,7 +870,7 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
     }
 
     if (SUCCEEDED(hr)) {
-        fprintf("CALLING CoUninitialize");
+        fprintf(stderr, "CALLING CoUninitialize");
         CoUninitialize();
     }
     return SUCCEEDED(hr) ? (jlong)result : NULL;
