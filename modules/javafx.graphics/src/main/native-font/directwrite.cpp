@@ -859,17 +859,18 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
     IWICImagingFactory* result = NULL;
     HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
     _com_error err(hr);
-    fprintf(stderr, "CoInitializeEx HR Result: %s", err.ErrorMessage());
+    fprintf(stderr, "\nCoInitializeEx HR Result: %s\n", err.ErrorMessage());
     /* This means COM has been initialized with a different concurrency model.
     * This should never happen. */
     if (hr == RPC_E_CHANGED_MODE) return NULL;
     hr = CoCreateInstance(CLSID_WICImagingFactory2, NULL, CLSCTX_INPROC_SERVER, __uuidof(IWICImagingFactory), reinterpret_cast<void**>(&result));
-    fprintf(stderr, "CoCreateInstance HR Result: %s", err.ErrorMessage());
+    fprintf(stderr, "\nCoCreateInstance HR Result: %s\n", err.ErrorMessage());
     if (result == NULL) {
         fprintf(stderr, "result was NULL");
     }
 
     if (SUCCEEDED(hr)) {
+        fprintf("CALLING CoUninitialize");
         CoUninitialize();
     }
     return SUCCEEDED(hr) ? (jlong)result : NULL;
