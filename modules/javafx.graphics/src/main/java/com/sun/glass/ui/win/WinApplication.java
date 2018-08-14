@@ -97,6 +97,7 @@ final class WinApplication extends Application implements InvokeLaterDispatcher.
                     overrideUIScale = 1.0f;
                 }
                 // This loading of msvcp140.dll and vcruntime140.dll (VS2017) is required on Windows platforms
+                System.out.println("WinApplication static");
                 Toolkit.loadMSWindowsLibraries();
                 Application.loadNativeLibrary();
                 return null;
@@ -107,6 +108,7 @@ final class WinApplication extends Application implements InvokeLaterDispatcher.
 
     private final InvokeLaterDispatcher invokeLaterDispatcher;
     WinApplication() {
+        System.out.println("WinApplication ctor");
         // Embedded in SWT, with shared event thread
         boolean isEventThread = AccessController
                 .doPrivileged((PrivilegedAction<Boolean>) () -> Boolean.getBoolean("javafx.embed.isEventThread"));

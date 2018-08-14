@@ -72,6 +72,7 @@ public class DWFactory extends PrismFontFactory {
 
     @Override
     protected boolean registerEmbeddedFont(String path) {
+        System.out.println("DWFactory.registerEmbeddedFont");
         IDWriteFactory factory = DWFactory.getDWriteFactory();
         IDWriteFontFile fontFile = factory.CreateFontFileReference(path);
         if (fontFile == null) return false;
@@ -96,6 +97,7 @@ public class DWFactory extends PrismFontFactory {
 
     static IDWriteFontCollection getFontCollection() {
         if (FONT_COLLECTION == null) {
+            System.out.println("DWFactory.getFontCollection");
             FONT_COLLECTION = getDWriteFactory().GetSystemFontCollection(false);
         }
         return FONT_COLLECTION;
@@ -106,7 +108,9 @@ public class DWFactory extends PrismFontFactory {
          * hand it over to some other thread. This would be a programming error
          * and it is not check by this implementation. */
         Thread current = Thread.currentThread();
+        System.out.println("inside checkThread, current thread: " + current.getName());
         if (d2dThread == null) {
+            System.out.println("d2dThread was null, so setting it to current");
             d2dThread = current;
         }
         if (d2dThread != current) {
@@ -117,6 +121,7 @@ public class DWFactory extends PrismFontFactory {
     }
 
     static synchronized IWICImagingFactory getWICFactory() {
+        System.out.println("inside getWICFactory, checking thread");
         checkThread();
         /* Using single threaded WIC Factory as it should only be used by the rendering thread */
         if (WIC_FACTORY == null) {
@@ -126,6 +131,7 @@ public class DWFactory extends PrismFontFactory {
     }
 
     static synchronized ID2D1Factory getD2DFactory() {
+        System.out.println("inside getD2DFactory, checking thread");
         checkThread();
         /* Using single threaded D2D Factory as it should only be used by the rendering thread */
         if (D2D_FACTORY == null) {

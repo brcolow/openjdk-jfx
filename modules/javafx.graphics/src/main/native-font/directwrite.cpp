@@ -29,6 +29,8 @@
 #include <dwrite.h>
 #include <d2d1.h>
 #include <wincodec.h>
+#include <assert.h>
+#include <comdef.h>
 #include <vector>
 #include <new>
 
@@ -839,11 +841,13 @@ jobject newD2D1_MATRIX_3X2_F(JNIEnv *env, D2D1_MATRIX_3X2_F *lpStruct)
     if (lpObject && lpStruct) setD2D1_MATRIX_3X2_FFields(env, lpObject, lpStruct);
     return lpObject;
 }
+
 /**************************************************************************/
 /*                                                                        */
 /*                            Functions                                   */
 /*                                                                        */
 /**************************************************************************/
+IWICImagingFactory* wicFactory = NULL;
 
 JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
     (JNIEnv *env, jclass that)
@@ -853,22 +857,23 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
      * to interface with COM.
      * Note: This method is called by DWFactory a single time.
      */
-    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-
-    /* This means COM has been initialize with a different concurrency model.
-     * This should never happen. */
-    if (hr == RPC_E_CHANGED_MODE) return NULL;
-
     IWICImagingFactory* result = NULL;
-    hr = CoCreateInstance(
-            CLSID_WICImagingFactory,
-            NULL,
-            CLSCTX_INPROC_SERVER,
-            IID_PPV_ARGS(&result)
-            );
+    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+    _com_error err(hr);
+    fprintf(stderr, "\nCoInitializeEx HR Result: %s\n", err.ErrorMessage());
+    /* This means COM has been initialized with a different concurrency model.
+    * This should never happen. */
+    if (hr == RPC_E_CHANGED_MODE) return NULL;
+    hr = CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, __uuidof(IWICImagingFactory), reinterpret_cast<void**>(&wicFactory));
+    fprintf(stderr, "\nCoCreateInstance HR Result: %s\n", err.ErrorMessage());
+    if (wicFactory == NULL) {
+        fprintf(stderr, "wicFactory was NULL");
+    }
 
-    /* Unload COM as no other COM objects will be create directly */
-    CoUninitialize();
+    if (SUCCEEDED(hr)) {
+        fprintf(stderr, "CALLING CoUninitialize");
+        CoUninitialize();
+    }
     return SUCCEEDED(hr) ? (jlong)result : NULL;
 }
 
@@ -915,12 +920,14 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1DWriteCreateFactory)
 JNIEXPORT jint JNICALL OS_NATIVE(AddRef)
     (JNIEnv *env, jclass that, jlong arg0)
 {
+    fprintf(stderr, "Calling native AddRef on arg0: %ld", arg0);
     return ((IUnknown *)arg0)->AddRef();
 }
 
 JNIEXPORT jint JNICALL OS_NATIVE(Release)
     (JNIEnv *env, jclass that, jlong arg0)
 {
+    fprintf(stderr, "Calling native Release on arg0: %ld", arg0);
     return ((IUnknown *)arg0)->Release();
 }
 
@@ -2339,7 +2346,10 @@ JNIEXPORT jint JNICALL OS_NATIVE(Draw)
 JNIEXPORT jlong JNICALL OS_NATIVE(CreateBitmap)
     (JNIEnv *env, jclass that, jlong arg0, jint arg1, jint arg2, jint arg3, jint arg4)
 {
-
+    if (((IWICImagingFactory *)arg0) == NULL) {
+        fprintf(stderr, "Inside native CreateBitmap, arg0 as IWICImagingFactory was NULL");
+    }
+    fprintf(stderr, "Inside CreateBitmap, arg0 is: %ld", arg0);
     IWICBitmap* result = NULL;
     GUID pixelFormat;
     switch (arg3) {
@@ -2355,7 +2365,7 @@ JNIEXPORT jlong JNICALL OS_NATIVE(CreateBitmap)
     case com_sun_javafx_font_directwrite_OS_GUID_WICPixelFormat32bppRGBA: pixelFormat = GUID_WICPixelFormat32bppRGBA; break;
     case com_sun_javafx_font_directwrite_OS_GUID_WICPixelFormat32bppPRGBA: pixelFormat = GUID_WICPixelFormat32bppPRGBA; break;
     }
-    HRESULT hr = ((IWICImagingFactory *)arg0)->CreateBitmap(arg1, arg2, (REFWICPixelFormatGUID)pixelFormat, (WICBitmapCreateCacheOption)arg4, &result);
+    HRESULT hr = wicFactory->CreateBitmap(arg1, arg2, (REFWICPixelFormatGUID)pixelFormat, (WICBitmapCreateCacheOption)arg4, &result);
     return SUCCEEDED(hr) ? (jlong)result : NULL;
 }
 

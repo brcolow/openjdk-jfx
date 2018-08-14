@@ -32,6 +32,7 @@ WIN.compileSwing = true;
 WIN.compileSWT = true;
 WIN.compileFXPackager = true;
 
+WIN.includeMonocle = true;
 WIN.includeNull3d = true
 
 // Lambda for naming the generated libs

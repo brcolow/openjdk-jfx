@@ -45,6 +45,7 @@ public class DWGlyphLayout extends GlyphLayout {
     protected TextRun addTextRun(PrismTextLayout layout, char[] chars, int start,
                                  int length, PGFont font, TextSpan span, byte level) {
 
+        System.out.println("DWGlyphLayout.addTextRun");
         IDWriteFactory factory = DWFactory.getDWriteFactory();
         IDWriteTextAnalyzer analyzer = factory.CreateTextAnalyzer();
         if (analyzer == null) {
@@ -90,6 +91,7 @@ public class DWGlyphLayout extends GlyphLayout {
         IDWriteFontFace face = ((DWFontFile)fr).getFontFace();
         if (face == null) return;
 
+        System.out.println("DWGlyphLayout.layout");
         IDWriteFactory factory = DWFactory.getDWriteFactory();
         IDWriteTextAnalyzer analyzer = factory.CreateTextAnalyzer();
         if (analyzer == null) return;
@@ -337,6 +339,7 @@ public class DWGlyphLayout extends GlyphLayout {
         /* zero is not a valid size for IDWriteTextFormat */
         float fontsize = size > 0 ? size : 1;
 
+        System.out.println("DWGlyphLayout.renderShape");
         IDWriteFactory factory = DWFactory.getDWriteFactory();
         /* Note this collection is not correct for embedded fonts,
          * currently this is not a problem since embedded fonts do

@@ -151,6 +151,7 @@ public class DWGlyph implements Glyph {
     }
 
     byte[] getD2DMask(float subPixelX, float subPixelY, boolean lcd) {
+        System.out.println("DWGlyph.getD2D mask, subPixelX = " + subPixelX + ", subPixelY = " + subPixelY + ", lcd = " + lcd);
         checkBounds();
         if (getWidth() == 0 || getHeight() == 0 || run.fontFace == 0) {
             return new byte[0];
@@ -161,13 +162,16 @@ public class DWGlyph implements Glyph {
         int w = rect.right - rect.left;
         int h = rect.bottom - rect.top;
         boolean cache = CACHE_TARGET && BITMAP_WIDTH >= w && BITMAP_HEIGHT >= h;
+        System.out.println("cache: " + cache);
         IWICBitmap bitmap;
         ID2D1RenderTarget target;
         if (cache) {
             bitmap = getCachedBitmap();
             target = getCachedRenderingTarget();
         } else {
+            System.out.println("calling create bitmap, w = " + w + ", h = " + h);
             bitmap = createBitmap(w, h);
+            System.out.println("Calling create rendering target with bitmap: " + bitmap);
             target = createRenderingTarget(bitmap);
         }
         if (bitmap == null || target == null) {
@@ -258,6 +262,7 @@ public class DWGlyph implements Glyph {
 
     IDWriteGlyphRunAnalysis createAnalysis(float x, float y) {
         if (run.fontFace == 0) return null;
+        System.out.println("DWGlyph.createAnalysis");
         IDWriteFactory factory = DWFactory.getDWriteFactory();
         int renderingMode = DWFontStrike.SUBPIXEL_Y ?
                             OS.DWRITE_RENDERING_MODE_NATURAL_SYMMETRIC :
@@ -284,10 +289,12 @@ public class DWGlyph implements Glyph {
 
     IWICBitmap createBitmap(int width, int height) {
         IWICImagingFactory factory = DWFactory.getWICFactory();
+        System.out.println("IWICImaging factory: " + factory);
         return  factory.CreateBitmap(width, height, BITMAP_PIXEL_FORMAT, OS.WICBitmapCacheOnDemand);
     }
 
     ID2D1RenderTarget createRenderingTarget(IWICBitmap bitmap) {
+        System.out.println("DWGlyph.createRenderingTarget for bitmap: " + bitmap);
         D2D1_RENDER_TARGET_PROPERTIES prop = new D2D1_RENDER_TARGET_PROPERTIES();
         /* All values set to defaults */
         prop.type = OS.D2D1_RENDER_TARGET_TYPE_DEFAULT;
@@ -297,7 +304,9 @@ public class DWGlyph implements Glyph {
         prop.dpiY = 0;
         prop.usage = OS.D2D1_RENDER_TARGET_USAGE_NONE;
         prop.minLevel = OS.D2D1_FEATURE_LEVEL_DEFAULT;
+        System.out.println("getting factory");
         ID2D1Factory factory = DWFactory.getD2DFactory();
+        System.out.println("factory: " + factory);
         return factory.CreateWicBitmapRenderTarget(bitmap, prop);
     }
 
