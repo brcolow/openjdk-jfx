@@ -323,12 +323,15 @@ WIN.glass.linkFlags = [linkFlags, "delayimp.lib", "gdi32.lib", "urlmon.lib", "Co
 WIN.glass.lib = "glass"
 
 WIN.glass.monocle = [:]
-WIN.glass.monocle.nativeSource = [file("${project("graphics").projectDir}/src/main/native-glass/monocle/win") ]
 WIN.glass.monocle.compiler = compiler
 WIN.glass.monocle.ccFlags = [ccFlags].flatten()
+WIN.glass.monocle.nativeSource = [file("${project("graphics").projectDir}/src/main/native-glass/monocle/win") ]
 WIN.glass.monocle.linker = linker
 WIN.glass.monocle.linkFlags = [linkFlags].flatten()
 WIN.glass.monocle.lib = "glass_monocle"
+WIN.glass.monocle.rcCompiler = rcCompiler;
+WIN.glass.monocle = defaultRcSource
+WIN.glass.monocle.rcFlags = ["/d", "JFX_FNAME=glass_monocle.dll", "/d", "JFX_INTERNAL_NAME=glass_monocle", rcFlags].flatten()
 
 WIN.decora = [:]
 WIN.decora.compiler = compiler
