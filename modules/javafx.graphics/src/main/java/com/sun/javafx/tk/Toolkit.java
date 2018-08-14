@@ -198,7 +198,6 @@ public abstract class Toolkit {
     }
 
     public static synchronized Toolkit getToolkit() {
-        System.out.println("Inside Toolkit.getToolkit");
         if (TOOLKIT != null) {
             return TOOLKIT;
         }
