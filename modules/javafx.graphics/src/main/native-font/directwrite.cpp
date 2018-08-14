@@ -847,6 +847,7 @@ jobject newD2D1_MATRIX_3X2_F(JNIEnv *env, D2D1_MATRIX_3X2_F *lpStruct)
 /*                            Functions                                   */
 /*                                                                        */
 /**************************************************************************/
+IWICImagingFactory* wicFactory = NULL;
 
 JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
     (JNIEnv *env, jclass that)
@@ -863,10 +864,10 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
     /* This means COM has been initialized with a different concurrency model.
     * This should never happen. */
     if (hr == RPC_E_CHANGED_MODE) return NULL;
-    hr = CoCreateInstance(CLSID_WICImagingFactory2, NULL, CLSCTX_INPROC_SERVER, __uuidof(IWICImagingFactory), reinterpret_cast<void**>(&result));
+    hr = CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, __uuidof(IWICImagingFactory), reinterpret_cast<void**>(&wicFactory));
     fprintf(stderr, "\nCoCreateInstance HR Result: %s\n", err.ErrorMessage());
-    if (result == NULL) {
-        fprintf(stderr, "result was NULL");
+    if (wicFactory == NULL) {
+        fprintf(stderr, "wicFactory was NULL");
     }
 
     if (SUCCEEDED(hr)) {
@@ -2364,7 +2365,7 @@ JNIEXPORT jlong JNICALL OS_NATIVE(CreateBitmap)
     case com_sun_javafx_font_directwrite_OS_GUID_WICPixelFormat32bppRGBA: pixelFormat = GUID_WICPixelFormat32bppRGBA; break;
     case com_sun_javafx_font_directwrite_OS_GUID_WICPixelFormat32bppPRGBA: pixelFormat = GUID_WICPixelFormat32bppPRGBA; break;
     }
-    HRESULT hr = ((IWICImagingFactory *)arg0)->CreateBitmap(arg1, arg2, (REFWICPixelFormatGUID)pixelFormat, (WICBitmapCreateCacheOption)arg4, &result);
+    HRESULT hr = wicFactory->CreateBitmap(arg1, arg2, (REFWICPixelFormatGUID)pixelFormat, (WICBitmapCreateCacheOption)arg4, &result);
     return SUCCEEDED(hr) ? (jlong)result : NULL;
 }
 
