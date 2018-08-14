@@ -104,7 +104,7 @@ public abstract class Application {
 
     // May be called on any thread.
     protected static synchronized void loadNativeLibrary(final String libname) {
-        System.out.println("Application.loadNativeLibrary: " + libName);
+        System.out.println("Application.loadNativeLibrary: " + libname);
         // load the native library of the specified libname.
         // the platform default by convention is "glass", all others should have a suffix, ie glass-x11
         if (!loaded) {
