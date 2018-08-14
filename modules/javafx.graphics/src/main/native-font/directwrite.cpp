@@ -848,7 +848,7 @@ jobject newD2D1_MATRIX_3X2_F(JNIEnv *env, D2D1_MATRIX_3X2_F *lpStruct)
 JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
     (JNIEnv *env, jclass that)
 {
-    /* This routine initialize COM in order to create an WICImagingFactory.
+    /* This routine initializes COM in order to create a WICImagingFactory.
      * It runs on the prism thread and expects no other codes in this thread
      * to interface with COM.
      * Note: This method is called by DWFactory a single time.
@@ -867,8 +867,6 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
             IID_PPV_ARGS(&result)
             );
 
-    /* Unload COM as no other COM objects will be create directly */
-    CoUninitialize();
     return SUCCEEDED(hr) ? (jlong)result : NULL;
 }
 

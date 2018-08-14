@@ -25,7 +25,17 @@
 
 package com.sun.glass.ui.monocle;
 
+import com.sun.javafx.PlatformUtil;
+
 class HeadlessPlatform extends NativePlatform {
+
+    @Override
+    void shutdown() {
+        super.shutdown();
+        if (PlatformUtil.isWindows()) {
+            _shutdown();
+        }
+    }
 
     @Override
     protected InputDeviceRegistry createInputDeviceRegistry() {
@@ -43,5 +53,7 @@ class HeadlessPlatform extends NativePlatform {
     protected NativeScreen createScreen() {
         return new HeadlessScreen();
     }
+
+    native protected void _shutdown();
 
 }
