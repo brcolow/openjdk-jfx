@@ -167,7 +167,9 @@ public abstract class Toolkit {
     }
 
     public static synchronized void loadMSWindowsLibraries() {
+        System.out.println("Toolkit.loadMSWindowsLibraries");
         for (String libName : msLibNames) {
+            System.out.println("Loading: " + libName);
             try {
                 NativeLibLoader.loadLibrary(libName);
             } catch (Throwable t) {
@@ -196,6 +198,7 @@ public abstract class Toolkit {
     }
 
     public static synchronized Toolkit getToolkit() {
+        System.out.println("Inside Toolkit.getToolkit");
         if (TOOLKIT != null) {
             return TOOLKIT;
         }

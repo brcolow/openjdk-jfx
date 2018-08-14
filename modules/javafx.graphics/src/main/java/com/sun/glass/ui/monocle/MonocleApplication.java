@@ -67,6 +67,7 @@ public final class MonocleApplication extends Application {
     private Runnable renderEndNotifier = () -> platform.getScreen().swapBuffers();
 
     MonocleApplication() {
+        System.out.println("MonocleApplication ctor");
         for (InputDevice device : platform.getInputDeviceRegistry().getInputDevices()) {
             updateDeviceFlags(device, true);
         }

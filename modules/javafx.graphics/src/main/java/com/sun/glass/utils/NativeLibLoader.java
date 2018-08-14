@@ -111,6 +111,7 @@ public class NativeLibLoader {
     }
 
     private static void loadLibraryInternal(String libraryName, List<String> dependencies, Class caller) {
+        System.out.println("loadLibraryInternal, libraryName: " + libraryName);
         // Look for the library in the same directory as the jar file
         // containing this class.
         // If that fails, then try System.loadLibrary.
