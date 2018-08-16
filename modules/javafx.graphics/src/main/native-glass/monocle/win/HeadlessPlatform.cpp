@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -23,44 +23,16 @@
  * questions.
  */
 
-package com.sun.glass.ui.monocle;
+#include "com_sun_glass_ui_monocle_HeadlessPlatform.h"
 
-import com.sun.glass.utils.NativeLibLoader;
-import com.sun.javafx.PlatformUtil;
+#include <comdef.h>
 
-class HeadlessPlatform extends NativePlatform {
-
-    HeadlessPlatform() {
-        if (PlatformUtil.isWindows()) {
-            NativeLibLoader.loadLibrary("glass_monocle");
-        }
-    }
-
-    @Override
-    void shutdown() {
-        super.shutdown();
-        if (PlatformUtil.isWindows()) {
-            _shutdown();
-        }
-    }
-
-    @Override
-    protected InputDeviceRegistry createInputDeviceRegistry() {
-        // use of a LinuxInputDeviceRegistry lets us simulate
-        // Linux input devices on any system
-        return new LinuxInputDeviceRegistry(true);
-    }
-
-    @Override
-    protected NativeCursor createCursor() {
-        return new NullCursor();
-    }
-
-    @Override
-    protected NativeScreen createScreen() {
-        return new HeadlessScreen();
-    }
-
-    native protected void _shutdown();
-
+/*
+ * Class:     com_sun_glass_ui_monocle_HeadlessPlatform
+ * Method:    _shutdown
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_glass_ui_monocle_HeadlessPlatform__1shutdown
+    (JNIEnv *env, jobject jrobot) {
+         CoUninitialize();
 }

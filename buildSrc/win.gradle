@@ -32,6 +32,7 @@ WIN.compileSwing = true;
 WIN.compileSWT = true;
 WIN.compileFXPackager = true;
 
+WIN.includeMonocle = true;
 WIN.includeNull3d = true
 
 // Lambda for naming the generated libs
@@ -299,6 +300,10 @@ WIN.glass.javahInclude = [
     "com/sun/glass/events/**",
     "com/sun/glass/ui/*",
     "com/sun/glass/ui/win/*"]
+if (WIN.includeMonocle) {
+    WIN.glass.variants = ["monocle"]
+    WIN.glass.javahInclude.addAll("com/sun/glass/ui/monocle/win/*")
+}
 WIN.glass.nativeSource = file("${project("graphics").projectDir}/src/main/native-glass/win")
 WIN.glass.compiler = compiler
 WIN.glass.rcCompiler = rcCompiler;
@@ -316,6 +321,20 @@ WIN.glass.linkFlags = [linkFlags, "delayimp.lib", "gdi32.lib", "urlmon.lib", "Co
         "/DELAYLOAD:user32.dll", "/DELAYLOAD:urlmon.dll", "/DELAYLOAD:winmm.dll", "/DELAYLOAD:shell32.dll",
         "/DELAYLOAD:Uiautomationcore.dll", "/DELAYLOAD:dwmapi.dll"].flatten()
 WIN.glass.lib = "glass"
+
+if (WIN.includeMonocle) {
+    WIN.glass.monocle = [:]
+    // WIN.glass.monocle.javahInclude = ["com/sun/glass/ui/monocle/win/*"]
+    WIN.glass.monocle.nativeSource = file("${project("graphics").projectDir}/src/main/native-glass/monocle/win")
+    WIN.glass.monocle.compiler = compiler
+    WIN.glass.monocle.ccFlags = [ccFlags].flatten()
+    WIN.glass.monocle.linker = linker
+    WIN.glass.monocle.linkFlags = [linkFlags].flatten()
+    WIN.glass.monocle.lib = "glass_monocle"
+    WIN.glass.monocle.rcCompiler = rcCompiler
+    WIN.glass.monocle.rcSource = defaultRcSource
+    WIN.glass.monocle.rcFlags = ["/d", "JFX_FNAME=glass_monocle.dll", "/d", "JFX_INTERNAL_NAME=glass_monocle", rcFlags].flatten()
+}
 
 WIN.decora = [:]
 WIN.decora.compiler = compiler
