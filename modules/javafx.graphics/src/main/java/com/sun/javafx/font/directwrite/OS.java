@@ -342,7 +342,6 @@ class OS {
 
     //IWICImagingFactory
     static final native long CreateBitmap(long ptr, int uiWidth, int uiHeight, int pixelFormat, int options);
-    static final native void UninitializeCOM(long ptr);
 
     //IWICBitmap
     static final native long Lock(long ptr, int x, int y, int width, int height, int flags);
