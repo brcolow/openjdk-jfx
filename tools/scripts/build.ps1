@@ -13,7 +13,7 @@ $env:VS150COMNTOOLS = $env:VCINSTALLDIR
 $env:VSVARS32FILE = "$env:VCINSTALLDIR\vcvars32.bat"
 refreshenv
 if ($env:APPVEYOR -eq "true") {
-  .\gradlew all test -PCOMPILE_WEBKIT=false -PCONF=DebugNative --stacktrace -x :web:test --info --no-daemon
+  .\gradlew all test -PCOMPILE_WEBKIT=false -PCONF=DebugNative -PFULL_TEST=true -PUSE_ROBOT=true --stacktrace -x :web:test --info --no-daemon
   if ($lastexitcode -ne 0) {
     exit $lastexitcode
   }

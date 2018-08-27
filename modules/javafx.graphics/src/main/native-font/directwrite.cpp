@@ -853,6 +853,7 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
      * to interface with COM.
      * Note: This method is called by DWFactory a single time.
      */
+    fprintf(stderr, "INSIDE CREATE IWICIMAGINGFACTORY");
     HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
 
     /* This means COM has been initialize with a different concurrency model.
