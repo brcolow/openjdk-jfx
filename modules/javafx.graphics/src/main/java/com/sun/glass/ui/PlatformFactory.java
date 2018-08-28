@@ -35,12 +35,15 @@ public abstract class PlatformFactory {
     private static PlatformFactory instance;
     public static synchronized PlatformFactory getPlatformFactory() {
         if (instance == null) {
+            System.out.println("PlatformFactory.getPlatformFactory instance was null");
             try {
                 String platform = Platform.determinePlatform();
+                System.out.println("result of determinePlatform: " + Platform.determinePlatform());
                 String factory = "com.sun.glass.ui." +  platform.toLowerCase(Locale.ROOT) + "."+ platform + "PlatformFactory";
-                // System.out.println("Loading Glass Factory " + factory);
+                System.out.println("Loading Glass Factory " + factory);
                 Class c = Class.forName(factory);
                 instance = (PlatformFactory) c.newInstance();
+                System.out.println("instance: " + instance);
             } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("Failed to load Glass factory class");
