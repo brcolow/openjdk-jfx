@@ -853,11 +853,14 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
      * to interface with COM.
      * Note: This method is called by DWFactory a single time.
      */
-    fprintf(stderr, "INSIDE CREATE IWICIMAGINGFACTORY");
+    fprintf(stderr, "INSIDE CREATE IWICIMAGINGFACTORY\n");
+    fprintf(stderr, "Calling CoInitializeEx in directwrite.cpp, thread id = %d\n", GetCurrentThreadId());
     HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
 
     if (hr == S_FALSE) {
-        fprintf(stderr, "COM WAS ALREADY INITIALIZED");
+        fprintf(stderr, "COM WAS ALREADY INITIALIZED\n");
+    } else if (hr == S_OK) {
+        fprintf(stderr, "directwrite.cpp COM init was S_OK\n");
     }
     /* This means COM has been initialize with a different concurrency model.
      * This should never happen. */
@@ -872,7 +875,9 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
             );
 
     /* Unload COM as no other COM objects will be create directly */
+    fprintf(stderr, "Calling CoUninitialize\n");
     CoUninitialize();
+    fprintf(stderr, "CoUninitialize called\n");
     return SUCCEEDED(hr) ? (jlong)result : NULL;
 }
 
