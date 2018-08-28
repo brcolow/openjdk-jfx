@@ -877,6 +877,7 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
     /* Unload COM as no other COM objects will be create directly */
     fprintf(stderr, "Calling CoUninitialize\n");
     CoUninitialize();
+    CoUninitialize();
     fprintf(stderr, "CoUninitialize called\n");
     return SUCCEEDED(hr) ? (jlong)result : NULL;
 }
