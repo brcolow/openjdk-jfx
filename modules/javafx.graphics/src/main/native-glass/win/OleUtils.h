@@ -239,7 +239,7 @@ inline HRESULT checkJavaException(JNIEnv *env)
 struct OLEHolder
 {
     OLEHolder()
-    : m_hr(::OleInitialize(NULL)), thread_id(GetCurrentThreadId)
+    : m_hr(::OleInitialize(NULL)), thread_id(GetCurrentThreadId())
     {
         if (SUCCEEDED(m_hr)) {
             fprintf(stderr, "OleUtils COM initialization success, thread id = %d", thread_id);
