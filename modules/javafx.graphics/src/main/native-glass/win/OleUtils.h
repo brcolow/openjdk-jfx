@@ -242,6 +242,9 @@ struct OLEHolder
     : m_hr(::OleInitialize(NULL))
     {
         if (SUCCEEDED(m_hr)) {
+            if (m_hr == S_FALSE) {
+                STRACE(_T("COM WAS INITIALIZED"));
+            }
             STRACE(_T("{OLE"));
         }
     }

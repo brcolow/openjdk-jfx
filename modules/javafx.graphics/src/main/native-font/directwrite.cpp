@@ -856,6 +856,9 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
     fprintf(stderr, "INSIDE CREATE IWICIMAGINGFACTORY");
     HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
 
+    if (hr == S_FALSE) {
+        fprintf(stderr, "COM WAS ALREADY INITIALIZED");
+    }
     /* This means COM has been initialize with a different concurrency model.
      * This should never happen. */
     if (hr == RPC_E_CHANGED_MODE) return NULL;
