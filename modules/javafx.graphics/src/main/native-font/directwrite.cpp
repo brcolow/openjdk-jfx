@@ -2349,6 +2349,7 @@ JNIEXPORT jlong JNICALL OS_NATIVE(CreateBitmap)
     (JNIEnv *env, jclass that, jlong arg0, jint arg1, jint arg2, jint arg3, jint arg4)
 {
 
+    fprintf(stderr, "Inside native CreateBitmap");
     IWICBitmap* result = NULL;
     GUID pixelFormat;
     switch (arg3) {
