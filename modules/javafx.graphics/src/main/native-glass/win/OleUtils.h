@@ -239,10 +239,9 @@ inline HRESULT checkJavaException(JNIEnv *env)
 struct OLEHolder
 {
     OLEHolder()
-    : m_hr(::OleInitialize(NULL))
+    : m_hr(::OleInitialize(NULL)), thread_id(GetCurrentThreadId)
     {
         if (SUCCEEDED(m_hr)) {
-            thread_id = GetCurrentThreadId();
             fprintf(stderr, "OleUtils COM initialization success, thread id = %d", thread_id);
             if (m_hr == S_FALSE) {
                 STRACE(_T("COM WAS ALREADY INITIALIZED (OleUtils)"));
@@ -251,11 +250,11 @@ struct OLEHolder
         }
     }
 
-    ~OLEHolder()
-    {
+    ~OLEHolder() {
         fprintf(stderr, "OleUtils OLE uninitialize, thread id = %d", thread_id);
         if (thread_id != GetCurrentThreadId()) {
             STRACE(_T("Un-initializing OLE on different thread"));
+        }
         if (SUCCEEDED(m_hr)) {
             ::OleUninitialize();
             STRACE(_T("}OLE"));
