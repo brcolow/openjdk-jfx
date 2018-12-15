@@ -575,5 +575,37 @@ JNIEXPORT jobjectArray JNICALL Java_com_sun_glass_ui_win_WinApplication_staticSc
     return GlassScreen::CreateJavaScreens(env);
 }
 
+/*
+ * Class:     com_sun_glass_ui_Application
+ * Method:    _hasPointer
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_sun_glass_ui_win_WinApplication__1hasPointer
+    (JNIEnv * env, jobject japplication)
+{
+    return (jboolean)::GetSystemMetrics(SM_MOUSEPRESENT);
+}
+
+/*
+ * Class:     com_sun_glass_ui_Application
+ * Method:    _hasPointerButton4
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_sun_glass_ui_win_WinApplication__1hasPointerButton4
+    (JNIEnv * env, jobject japplication)
+{
+    return (jboolean)(::GetSystemMetrics(SM_CMOUSEBUTTONS) >= 4);
+}
+
+/*
+ * Class:     com_sun_glass_ui_Application
+ * Method:    _hasPointerButton5
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_sun_glass_ui_win_WinApplication__1hasPointerButton5
+    (JNIEnv * env, jobject japplication)
+{
+    return (jboolean)(::GetSystemMetrics(SM_CMOUSEBUTTONS) >= 5);
+}
 } // extern "C"
 

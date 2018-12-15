@@ -59,8 +59,12 @@ public final class MonocleApplication extends Application {
     private static final int DEVICE_5WAY = 3;
     /** Bit to indicate that a device has a full PC keyboard */
     private static final int DEVICE_PC_KEYBOARD = 4;
+    /** Bit to indicate that a device has relative motion pointer support with a fourth button */
+    private static final int DEVICE_POINTER_BUTTON4 = 5;
+    /** Bit to indicate that a device has relative motion pointer support with a fifth button */
+    private static final int DEVICE_POINTER_BUTTON5 = 6;
     /** Largest bit used in device capability bitmasks */
-    private static final int DEVICE_MAX = 4;
+    private static final int DEVICE_MAX = 6;
     /** A running count of the numbers of devices with each device capability */
     private int[] deviceFlags = new int[DEVICE_MAX + 1];
     private Thread shutdownHookThread;
@@ -98,6 +102,12 @@ public final class MonocleApplication extends Application {
             } else if (deviceFlags[DEVICE_POINTER] < 1 && !added) {
                 staticCursor_setVisible(false);
             }
+        }
+        if (device.hasRelative4thButton()) {
+            deviceFlags[DEVICE_POINTER_BUTTON4] += modifier;
+        }
+        if (device.hasRelative5thButton()) {
+            deviceFlags[DEVICE_POINTER_BUTTON5] += modifier;
         }
         if (device.isFullKeyboard()) {
             deviceFlags[DEVICE_PC_KEYBOARD] += modifier;
@@ -320,6 +330,16 @@ public final class MonocleApplication extends Application {
     @Override
     public boolean hasPointer() {
         return deviceFlags[DEVICE_POINTER] > 0;
+    }
+
+    @Override
+    public boolean hasPointerButton4() {
+        return deviceFlags[DEVICE_POINTER_BUTTON4] > 0;
+    }
+
+    @Override
+    public boolean hasPointerButton5() {
+        return deviceFlags[DEVICE_POINTER_BUTTON5] > 0;
     }
 
     @Override

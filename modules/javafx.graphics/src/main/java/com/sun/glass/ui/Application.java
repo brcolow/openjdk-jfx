@@ -714,6 +714,14 @@ public abstract class Application {
         return true;
     }
 
+    public boolean hasPointerButton4() {
+        return true;
+    }
+
+    public boolean hasPointerButton5() {
+        return true;
+    }
+
     protected abstract boolean _supportsUnifiedWindows();
     public final boolean supportsUnifiedWindows() {
         checkEventThread();

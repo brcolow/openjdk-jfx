@@ -49,6 +49,7 @@ static void process_events(GdkEvent*, gpointer);
 JNIEnv* mainEnv; // Use only with main loop thread!!!
 
 extern gboolean disableGrab;
+extern int numMouseButtons = -1;
 
 static gboolean call_runnable (gpointer data)
 {
@@ -386,6 +387,91 @@ JNIEXPORT jboolean JNICALL Java_com_sun_glass_ui_gtk_GtkApplication__1supportsTr
             && gdk_screen_is_composited(gdk_screen_get_default());
 }
 
+/*
+ * Class:     com_sun_glass_ui_gtk_GtkApplication
+ * Method:    _hasPointer
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_sun_glass_ui_gtk_GtkApplication__1hasPointer
+  (JNIEnv * env, jobject obj) {
+      if (numMouseButtons == -1) {
+          numMouseButtons = getNumMouseButtons();
+      }
+      return numMouseButtons >= 1; // TODO: Is this really the logic we want for if a pointer exists?
+}
+
+/*
+ * Class:     com_sun_glass_ui_gtk_GtkApplication
+ * Method:    _hasPointerButton4
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_sun_glass_ui_gtk_GtkApplication__1hasPointerButton4
+  (JNIEnv * env, jobject obj) {
+    if (numMouseButtons == -1) {
+        numMouseButtons = getNumMouseButtons();
+    }
+    return numMouseButtons >= 4;
+}
+
+/*
+ * Class:     com_sun_glass_ui_gtk_GtkApplication
+ * Method:    _hasPointerButton5
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_sun_glass_ui_gtk_GtkApplication__1hasPointerButton5
+  (JNIEnv * env, jobject obj) {
+      if (numMouseButtons == -1) {
+          numMouseButtons = getNumMouseButtons();
+      }
+      return numMouseButtons >= 5;
+}
+
+int32_t getNumMouseButtons() {
+    int32_t major_opcode, first_event, first_error;
+    int32_t isXInputAvailable;
+    int32_t numDevices, devIdx, clsIdx;
+    XDeviceInfo* devices;
+    XDeviceInfo* aDevice;
+    XButtonInfo* bInfo;
+    int32_t local_num_buttons = 0;
+
+    isXInputAvailable = XQueryExtension(gdk_x11_get_default_xdisplay(), "XInputExtension", &major_opcode, &first_event, &first_error);
+    if (isXInputAvailable) {
+        devices = XListInputDevices(gdk_x11_get_default_xdisplay(), &numDevices);
+        for (devIdx = 0; devIdx < numDevices; devIdx++) {
+            aDevice = &(devices[devIdx]);
+             if (aDevice->use == IsXExtensionPointer) {
+                 for (clsIdx = 0; clsIdx < aDevice->num_classes; clsIdx++) {
+                     if (aDevice->inputclassinfo[clsIdx].class == ButtonClass) {
+                         bInfo = (XButtonInfo*)(&(aDevice->inputclassinfo[clsIdx]));
+                         local_num_buttons = bInfo->num_buttons;
+                         break;
+                         }
+                     }
+                     break;
+                 }
+                 if (local_num_buttons <= 0 ) {
+                     if (aDevice->use == IsXPointer) {
+                          for (clsIdx = 0; clsIdx < aDevice->num_classes; clsIdx++) {
+                               if (aDevice->inputclassinfo[clsIdx].class == ButtonClass) {
+                                   bInfo = (XButtonInfo*)(&(aDevice->inputclassinfo[clsIdx]));
+                                       local_num_buttons = bInfo->num_buttons;
+                                       break;
+                                   }
+                                }
+                                break;
+                          }
+                     }
+                 }
+
+                 XFreeDeviceList(devices);
+        }
+        if (local_num_buttons == 0 ) {
+            local_num_buttons = 3;
+        }
+
+        return local_num_buttons;
+    }
 } // extern "C"
 
 bool is_window_enabled_for_event(GdkWindow * window, WindowContext *ctx, gint event_type) {

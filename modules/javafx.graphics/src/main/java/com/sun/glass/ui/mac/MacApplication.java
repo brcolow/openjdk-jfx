@@ -330,4 +330,28 @@ final class MacApplication extends Application implements InvokeLaterDispatcher.
 
     @Override
     protected native int _getKeyCodeForChar(char c);
+
+    @Override
+    public boolean hasPointer() {
+        return _hasPointer();
+    }
+
+    @Override
+    protected native boolean _hasPointer();
+
+    @Override
+    public boolean hasPointerButton4() {
+        return _hasPointerButton4();
+    }
+
+    @Override
+    protected native boolean _hasPointerButton4();
+
+    @Override
+    public boolean hasPointerButton5() {
+        return _hasPointerButton5();
+    }
+
+    @Override
+    protected native boolean _hasPointerButton5();
 }

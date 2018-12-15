@@ -270,6 +270,28 @@ class LinuxInputDevice implements Runnable, InputDevice {
     }
 
     @Override
+    public boolean hasRelative4thButton() {
+        if ("1".equals(udevManifest.get("ID_INPUT_MOUSE"))) {
+            BitSet key = capabilities.get("key");
+            if (key != null) {
+                return key.get(LinuxInput.BTN_BACK); // Should this be BTN_SIDE?
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean hasRelative5thButton() {
+        if ("1".equals(udevManifest.get("ID_INPUT_MOUSE"))) {
+            BitSet key = capabilities.get("key");
+            if (key != null) {
+                return key.get(LinuxInput.BTN_FORWARD); // Should this be BTN_EXTRA?
+            }
+        }
+        return false;
+    }
+
+    @Override
     public boolean is5Way() {
         BitSet key = capabilities.get("key");
         if (key == null) {

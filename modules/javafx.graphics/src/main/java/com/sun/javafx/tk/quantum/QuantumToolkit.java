@@ -1182,6 +1182,10 @@ public final class QuantumToolkit extends Toolkit {
                 return Application.GetApplication().hasMultiTouch();
             case INPUT_POINTER:
                 return Application.GetApplication().hasPointer();
+            case INPUT_POINTER_BUTTON4:
+                return Application.GetApplication().hasPointerButton4();
+            case INPUT_POINTER_BUTTON5:
+                return Application.GetApplication().hasPointerButton5();
             default:
                 return false;
         }

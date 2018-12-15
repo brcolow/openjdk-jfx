@@ -39,6 +39,7 @@
 
 #import "ProcessInfo.h"
 #import <Security/SecRequirement.h>
+#import <IOKit/hid/IOHIDLib.h>
 
 //#define VERBOSE
 #ifndef VERBOSE
@@ -55,6 +56,7 @@ static BOOL isFullScreenExitingLoop = NO;
 static NSMutableDictionary * keyCodeForCharMap = nil;
 static BOOL isEmbedded = NO;
 static BOOL disableSyncRendering = NO;
+static int numMouseButtons = -1;
 
 jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
 {
@@ -788,6 +790,47 @@ jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
     return isSandboxed == 1 ? YES : NO;
 }
 
++ (int)getNumMouseButtons
+{
+    int numMouseButtons = -1;
+    IOHIDManagerRef hidManager = IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone);
+    IOHIDManagerSetDeviceMatching(hidManager, NULL); // NULL dict enumerates all devices
+    IOHIDManagerOpen(hidManager, kIOHIDOptionsTypeNone);
+
+    CFSetRef copyOfDevices = IOHIDManagerCopyDevices(hidManager);
+    CFMutableArrayRef devArray = CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks);
+    CFSetApplyFunction(copyOfDevices, CFSetCopyCallBack, (void *)devArray);
+    CFIndex numDevices = CFArrayGetCount(devArray);
+    CFRelease(copyOfDevices);
+
+    for (int i = 0; i < numDevices; i++) {
+        IOHIDDeviceRef hidDevice = (IOHIDDeviceRef) CFArrayGetValueAtIndex(devArray, i);
+        if (hidDevice != NULL) {
+            CFArrayRef elemArray = IOHIDDeviceCopyMatchingElements(hidDev, NULL, 0);
+            int numElements = (int) CFArrayGetCount(elemArray);
+            for (int j = 0; j < numElements; j++) {
+                IOHIDElementRef element = (IOHIDElementRef) CFArrayGetValueAtIndex(elemArray, j);
+                uint32_t type = IOHIDElementGetType(element);
+                uint32_t usagePage = IOHIDElementGetUsagePage(element);
+                uint32_t usage = IOHIDElementGetUsage(element);
+                if (IOHIDDeviceConformsTo(hidDevice, kHIDPage_GenericDesktop, kHIDUsage_GD_Mouse) ||
+                        IOHIDDeviceConformsTo(hidDevice, kHIDPage_GenericDesktop, kHIDUsage_HD_Pointer)) {
+                    if (type == kIOHIDElementTypeInput_Button && page == kHIDPage_Button) {
+                        // TODO: Instead of tracking the highest button number a bitmask of enabled/disabled
+                        // buttons would possibly be nicer.
+                        if (IOHIDValueGetIntegerValue(hidDevice) && numMouseButtons < usage)
+                            numMouseButtons = usage;
+                        }
+                    }
+                }
+            }
+        }
+
+        return numMouseButtons;
+    }
+
+}
+
 @end
 
 #pragma mark --- JNI
@@ -1151,4 +1194,46 @@ JNIEXPORT jint JNICALL Java_com_sun_glass_ui_mac_MacApplication__1getMacKey
     unsigned short macCode = 0;
     GetMacKey(code, &macCode);
     return (macCode & 0xFFFF);
+}
+
+/*
+ * Class:     com_sun_glass_ui_mac_MacApplication
+ * Method:    _hasPointer
+ * Signature: ()Z;
+ */
+JNIEXPORT jboolean JNICALL Java_com_sun_glass_ui_mac_MacApplication__1hasPointer
+(JNIEnv *env, jobject japplication)
+{
+    if (numMouseButtons == -1) {
+        numMouseButtons = getNumMouseButtons();
+    }
+    return numMouseButtons >= 1; // TODO: Is this really the logic we want?
+}
+
+/*
+ * Class:     com_sun_glass_ui_mac_MacApplication
+ * Method:    _hasPointerButton4
+ * Signature: ()Z;
+ */
+JNIEXPORT jboolean JNICALL Java_com_sun_glass_ui_mac_MacApplication__1hasPointerButton4
+(JNIEnv *env, jobject japplication)
+{
+    if (numMouseButtons == -1) {
+        numMouseButtons = getNumMouseButtons();
+    }
+    return numMouseButtons >= 4;
+}
+
+/*
+ * Class:     com_sun_glass_ui_mac_MacApplication
+ * Method:    _hasPointerButton5
+ * Signature: ()Z;
+ */
+JNIEXPORT jboolean JNICALL Java_com_sun_glass_ui_mac_MacApplication__1hasPointerButton5
+(JNIEnv *env, jobject japplication)
+{
+    if (numMouseButtons == -1) {
+        numMouseButtons = getNumMouseButtons();
+    }
+    return numMouseButtons >= 5;
 }

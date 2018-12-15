@@ -47,9 +47,23 @@ interface InputDevice {
      * pointing events are those received from devices where the event signifies
      * a relative change in cursor position on the screen. For example, a mouse,
      * trackball, trackpad or joystick is a relative pointing device. A touch
-     * screen is an sbsolute pointing device.
+     * screen is an absolute pointing device.
      */
     boolean isRelative();
+
+    /**
+     * @return true if the device provides relative pointing events with support
+     * for a fourth (4th) button. {@link #isRelative()} is a necessary, but not
+     * sufficient, condition for this method to return {@literal true}.
+     */
+    boolean hasRelative4thButton();
+
+    /**
+     * @return true if the device provides relative pointing events with support
+     * for a fifth (5th) button. {@link #isRelative()} is a necessary, but not
+     * sufficient, condition for this method to return {@literal true}.
+     */
+    boolean hasRelative5thButton();
 
     /**
      * @return true if the device provides direction arrow keys (UP, DOWN, LEFT

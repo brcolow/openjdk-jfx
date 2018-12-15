@@ -225,6 +225,32 @@ public enum ConditionalFeature {
      * true.
      * @since JavaFX 8.0
      */
-    INPUT_POINTER
+    INPUT_POINTER,
+
+    /**
+     * Indicates whether or not, if there is a relative motion pointer device
+     * attached, if it supports a fourth button.
+     * <p>
+     * On desktop platforms JavaFX makes an attempt to initialize this
+     * ConditionalFeature based on what the pointer device reports. On
+     * embedded platforms this ConditionalFeature will typically default
+     * to false.
+     *
+     * @since 12
+     */
+    INPUT_POINTER_BUTTON4,
+
+    /**
+     * Indicates whether or not, if there is a relative motion pointer device
+     * attached, if it supports a fifth button.
+     * <p>
+     * On desktop platforms JavaFX makes an attempt to initialize this
+     * ConditionalFeature based on what the pointer device reports. On
+     * embedded platforms this ConditionalFeature will typically default
+     * to false.
+     *
+     * @since 12
+     */
+    INPUT_POINTER_BUTTON5;
 
 }
