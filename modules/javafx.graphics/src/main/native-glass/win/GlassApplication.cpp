@@ -583,7 +583,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_sun_glass_ui_win_WinApplication_staticSc
 JNIEXPORT jboolean JNICALL Java_com_sun_glass_ui_win_WinApplication__1hasPointer
     (JNIEnv * env, jobject japplication)
 {
-    return (jboolean)::GetSystemMetrics(SM_MOUSEPRESENT);
+    return (jboolean)::GetSystemMetrics(SM_MOUSEPRESENT) || (jboolean)::GetSystemMetrics(SM_CMOUSEBUTTONS) == 0;
 }
 
 /*
