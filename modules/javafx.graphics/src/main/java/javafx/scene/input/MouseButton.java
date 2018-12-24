@@ -50,4 +50,5 @@ public enum MouseButton {
      * Represents seconday (button 3, usually the right) mouse button.
      */
     SECONDARY,
+
 }

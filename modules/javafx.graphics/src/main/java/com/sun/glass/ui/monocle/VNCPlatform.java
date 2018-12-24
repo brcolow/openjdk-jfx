@@ -37,6 +37,8 @@ class VNCPlatform extends HeadlessPlatform {
                     @Override public boolean isTouch() { return true; }
                     @Override public boolean isMultiTouch() { return false; }
                     @Override public boolean isRelative() { return false; }
+                    @Override public boolean hasRelative4thButton() { return false; }
+                    @Override public boolean hasRelative5thButton() { return false; }
                     @Override public boolean is5Way() { return false; }
                     @Override public boolean isFullKeyboard() { return false; }
                 });

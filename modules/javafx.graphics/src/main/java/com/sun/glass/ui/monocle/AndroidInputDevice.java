@@ -60,6 +60,16 @@ class AndroidInputDevice implements Runnable, InputDevice {
     }
 
     @Override
+    public boolean hasRelative4thButton() {
+        return false;
+    }
+
+    @Override
+    public boolean hasRelative5thButton() {
+        return false;
+    }
+
+    @Override
     public boolean is5Way() {
         return false;
     }

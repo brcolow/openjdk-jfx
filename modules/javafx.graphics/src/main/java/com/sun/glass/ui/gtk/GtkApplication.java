@@ -483,7 +483,6 @@ final class GtkApplication extends Application implements
         return _hasPointer();
     }
 
-    @Override
     protected native boolean _hasPointer();
 
     @Override
@@ -491,7 +490,6 @@ final class GtkApplication extends Application implements
         return _hasPointerButton4();
     }
 
-    @Override
     protected native boolean _hasPointerButton4();
 
     @Override
@@ -499,7 +497,6 @@ final class GtkApplication extends Application implements
         return _hasPointerButton5();
     }
 
-    @Override
     protected native boolean _hasPointerButton5();
 
 }
