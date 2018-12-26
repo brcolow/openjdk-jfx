@@ -107,6 +107,7 @@ final class WinApplication extends Application implements InvokeLaterDispatcher.
 
     private final InvokeLaterDispatcher invokeLaterDispatcher;
     WinApplication() {
+        System.out.println("Inside WinApplication ctor");
         // Embedded in SWT, with shared event thread
         boolean isEventThread = AccessController
                 .doPrivileged((PrivilegedAction<Boolean>) () -> Boolean.getBoolean("javafx.embed.isEventThread"));

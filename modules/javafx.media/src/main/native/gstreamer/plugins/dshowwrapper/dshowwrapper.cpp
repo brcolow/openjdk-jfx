@@ -1190,8 +1190,10 @@ static void dshowwrapper_destroy_graph (GstDShowWrapper *decoder)
         decoder->pGraph = NULL;
     }
 
-    if (bCallCoUninitialize)
+    if (bCallCoUninitialize) {
+        fprintf(stderr, "directshow calling CoUninitialize");
         CoUninitialize();
+    }
 }
 
 gsize dshowwrapper_get_avc_config(void *in, gsize in_size, BYTE *out, gsize out_size, guint *avcProfile, guint *avcLevel, guint *lengthSizeMinusOne)

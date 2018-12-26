@@ -853,8 +853,15 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
      * to interface with COM.
      * Note: This method is called by DWFactory a single time.
      */
+    fprintf(stderr, "INSIDE CREATE IWICIMAGINGFACTORY\n");
+    fprintf(stderr, "Calling CoInitializeEx in directwrite.cpp, thread id = %d\n", GetCurrentThreadId());
     HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
 
+    if (hr == S_FALSE) {
+        fprintf(stderr, "COM WAS ALREADY INITIALIZED\n");
+    } else if (hr == S_OK) {
+        fprintf(stderr, "directwrite.cpp COM init was S_OK\n");
+    }
     /* This means COM has been initialize with a different concurrency model.
      * This should never happen. */
     if (hr == RPC_E_CHANGED_MODE) return NULL;
@@ -868,7 +875,10 @@ JNIEXPORT jlong JNICALL OS_NATIVE(_1WICCreateImagingFactory)
             );
 
     /* Unload COM as no other COM objects will be create directly */
+    fprintf(stderr, "Calling CoUninitialize\n");
     CoUninitialize();
+    CoUninitialize();
+    fprintf(stderr, "CoUninitialize called\n");
     return SUCCEEDED(hr) ? (jlong)result : NULL;
 }
 
@@ -2340,6 +2350,7 @@ JNIEXPORT jlong JNICALL OS_NATIVE(CreateBitmap)
     (JNIEnv *env, jclass that, jlong arg0, jint arg1, jint arg2, jint arg3, jint arg4)
 {
 
+    fprintf(stderr, "Inside native CreateBitmap");
     IWICBitmap* result = NULL;
     GUID pixelFormat;
     switch (arg3) {
