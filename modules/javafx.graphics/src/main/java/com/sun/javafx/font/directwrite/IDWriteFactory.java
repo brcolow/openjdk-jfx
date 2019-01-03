@@ -105,4 +105,14 @@ class IDWriteFactory extends IUnknown {
         long result = OS.CreateFontFace(ptr, fontFaceType, fontFiles.ptr, faceIndex, fontFaceSimulationFlags);
         return result != 0 ? new IDWriteFontFace(result) : null;
     }
+
+    IDWriteColoredGlyphRuns TranslateColorGlyphRun(float baselineOriginX,
+                                                   float baselineOriginY,
+                                                   DWRITE_GLYPH_RUN glyphRun,
+                                                   int colorPaletteIndex,
+                                                   IDWriteColorGlyphRunEnumerator colorLayers) {
+        long result = OS.TranslateColorGlyphRun(ptr, baselineOriginX, baselineOriginY,
+                glyphRun, colorPaletteIndex, colorLayers);
+        return result != 0 ? new IDWriteColoredGlyphRuns(result) : null;
+    }
 }

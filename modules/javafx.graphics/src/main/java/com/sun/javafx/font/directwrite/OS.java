@@ -290,6 +290,12 @@ class OS {
                                             long fontFiles,
                                             int faceIndex,
                                             int fontFaceSimulationFlags);
+    static final native long TranslateColorGlyphRun(long ptr,
+                                                    float baselineOriginX,
+                                                    float baselineOriginY,
+                                                    DWRITE_GLYPH_RUN glyphRun,
+                                                    int colorPaletteIndex,
+                                                    IDWriteColorGlyphRunEnumerator colorLayers);
 
     //IUnknown
     static final native int AddRef(long ptr);
@@ -361,4 +367,8 @@ class OS {
     static final native void SetTransform(long ptr, D2D1_MATRIX_3X2_F transform);
     static final native void DrawGlyphRun(long ptr, D2D1_POINT_2F baselineOrigin, DWRITE_GLYPH_RUN glyphRun, long foregroundBrush, int measuringMode);
     static final native long CreateSolidColorBrush(long ptr, D2D1_COLOR_F color);
+
+    //IDWriteColorGlyphRunEnumerator
+    static final native DWRITE_COLOR_GLYPH_RUN GetCurrentRun(long ptr);
+    static final native boolean MoveNext(long ptr);
 }

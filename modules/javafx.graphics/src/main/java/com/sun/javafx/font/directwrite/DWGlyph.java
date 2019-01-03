@@ -187,6 +187,8 @@ public class DWGlyph implements Glyph {
             glyphY -= subPixelY;
         }
 
+        IDWriteFactory factory = DWFactory.getDWriteFactory();
+        factory.
         target.BeginDraw();
         target.SetTransform(transform);
         target.Clear(WHITE);
