@@ -162,6 +162,27 @@ jobject newDWRITE_GLYPH_METRICS(JNIEnv *env, DWRITE_GLYPH_METRICS *lpStruct)
     return lpObject;
 }
 
+void setDWRITE_COLOR_GLYPH_RUNFields(JNIEnv *env, jobject lpObject, DWRITE_COLOR_GLYPH_RUN *lpStruct)
+{
+    if (!DWRITE_GLYPH_METRICSFc.cached) cacheDWRITE_GLYPH_METRICSFields(env);
+    env->SetIntField(lpObject, DWRITE_GLYPH_METRICSFc.leftSideBearing, (jint)lpStruct->leftSideBearing);
+    env->SetIntField(lpObject, DWRITE_GLYPH_METRICSFc.advanceWidth, (jint)lpStruct->advanceWidth);
+    env->SetIntField(lpObject, DWRITE_GLYPH_METRICSFc.rightSideBearing, (jint)lpStruct->rightSideBearing);
+    env->SetIntField(lpObject, DWRITE_GLYPH_METRICSFc.topSideBearing, (jint)lpStruct->topSideBearing);
+    env->SetIntField(lpObject, DWRITE_GLYPH_METRICSFc.advanceHeight, (jint)lpStruct->advanceHeight);
+    env->SetIntField(lpObject, DWRITE_GLYPH_METRICSFc.bottomSideBearing, (jint)lpStruct->bottomSideBearing);
+    env->SetIntField(lpObject, DWRITE_GLYPH_METRICSFc.verticalOriginY, (jint)lpStruct->verticalOriginY);
+}
+
+jobject newDWRITE_COLOR_GLYPH_RUN(JNIEnv *env, DWRITE_COLOR_GLYPH_RUN *lpStruct)
+{
+    jobject lpObject = NULL;
+    if (!DWRITE_GLYPH_METRICSFc.cached) cacheDWRITE_GLYPH_METRICSFields(env);
+    lpObject = env->NewObject(DWRITE_GLYPH_METRICSFc.clazz, DWRITE_GLYPH_METRICSFc.init);
+    if (lpObject && lpStruct) setDWRITE_GLYPH_METRICSFields(env, lpObject, lpStruct);
+    return lpObject;
+}
+
 typedef struct DWRITE_MATRIX_FID_CACHE {
     int cached;
     jclass clazz;
@@ -1940,6 +1961,36 @@ fail:
     return SUCCEEDED(hr) ? (jlong)result : NULL;
 }
 
+JNIEXPORT jlong JNICALL OS_NATIVE(TranslateColorGlyphRun)
+    (JNIEnv *env, jclass that, jlong arg0, jfloat arg1, jfloat arg2, jobject arg3, jlint arg4, jint arg5)
+{
+    HRESULT hr = E_FAIL;
+    IDWriteColorGlyphRunEnumerator* result = NULL;
+    DWRITE_GLYPH_RUN _arg3, *lparg3 = NULL;
+    DWRITE_MATRIX _arg5, *lparg5 = NULL;
+    _arg3.glyphCount = 1;
+    _arg3.glyphIndices = new (std::nothrow) UINT16 [1];
+    _arg3.glyphAdvances = new (std::nothrow) FLOAT [1];
+    _arg3.glyphOffsets = new (std::nothrow) DWRITE_GLYPH_OFFSET [1];
+
+    if (arg3) if ((lparg3 = getDWRITE_GLYPH_RUNFields(env, arg3, &_arg3)) == NULL) goto fail;
+    if (arg5) if ((lparg5 = getDWRITE_MATRIXFields(env, arg5, &_arg5)) == NULL) goto fail;
+
+    hr = ((IDWriteFactory *)arg0)->TranslateColorGlyphRun((FLOAT)arg1,
+                                                          (FLOAT)arg2,
+                                                          lparg3,
+                                                          (DWRITE_MEASURING_MODE)arg4,
+                                                          lparg5,
+                                                          (UINT32)arg6,
+                                                          &result);
+
+fail:
+    delete [] _arg3.glyphIndices;
+    delete [] _arg3.glyphAdvances;
+    delete [] _arg3.glyphOffsets;
+    return SUCCEEDED(hr) ? (jlong)result : NULL;
+}
+
 /* IDWriteFontFile */
 JNIEXPORT jint JNICALL OS_NATIVE(Analyze)
     (JNIEnv *env, jclass that, jlong arg0, jbooleanArray arg1, jintArray arg2, jintArray arg3, jintArray arg4)
@@ -2474,4 +2525,25 @@ fail:
     return SUCCEEDED(hr) ? (jlong)result : NULL;
 }
 
+/*IDWriteColorGlyphRunEnumerator */
+JNIEXPORT jobject JNICALL OS_NATIVE(GetCurrentRun)
+    (JNIEnv *env, jclass that, jlong arg0)
+{
+    HRESULT hr = E_FAIL;
+    DWRITE_COLOR_GLYPH_RUN* result = NULL;
+    hr = ((IDWriteColorGlyphRunEnumerator *)arg0)->GetCurrentRun(&result);
+    if (SUCCEEDED(hr)) {
+        result = newDWRITE_COLOR_GLYPH_RUN(env, &glyphMetrics[0]);
+    }
+    return result;
+}
+
+JNIEXPORT jlong JNICALL OS_NATIVE(MoveNext)
+    (JNIEnv *env, jclass that, jlong arg0)
+{
+    HRESULT hr = E_FAIL;
+    DWRITE_COLOR_GLYPH_RUN* result = NULL;
+    hr = ((IDWriteColorGlyphRunEnumerator *)arg0)->GetCurrentRun(&result);
+    return SUCCEEDED(hr) ? (jlong)result : NULL;
+}
 #endif /* WIN32 */

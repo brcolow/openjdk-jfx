@@ -294,8 +294,9 @@ class OS {
                                                     float baselineOriginX,
                                                     float baselineOriginY,
                                                     DWRITE_GLYPH_RUN glyphRun,
-                                                    int colorPaletteIndex,
-                                                    IDWriteColorGlyphRunEnumerator colorLayers);
+                                                    int measuringMode,
+                                                    DWRITE_MATRIX worldToDeviceTransform,
+                                                    int colorPaletteIndex);
 
     //IUnknown
     static final native int AddRef(long ptr);
