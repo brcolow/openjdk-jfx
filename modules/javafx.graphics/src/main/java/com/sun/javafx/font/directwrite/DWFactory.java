@@ -130,6 +130,7 @@ public class DWFactory extends PrismFontFactory {
         /* Using single threaded D2D Factory as it should only be used by the rendering thread */
         if (D2D_FACTORY == null) {
             D2D_FACTORY = OS.D2D1CreateFactory(OS.D2D1_FACTORY_TYPE_SINGLE_THREADED);
+            D2D_DEVICE = OS.CreateDevice(dxgiDevice);
         }
         return D2D_FACTORY;
     }
