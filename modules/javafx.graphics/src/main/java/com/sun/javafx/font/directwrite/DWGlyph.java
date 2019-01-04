@@ -195,6 +195,12 @@ public class DWGlyph implements Glyph {
         if (!lcd) {
             target.SetTextAntialiasMode(OS.D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE);
         }
+        IDWriteFactory factory = DWFactory.getDWriteFactory();
+        IDWriteColorGlyphRunEnumerator colorGlyphRunEnumerator = factory.TranslateColorGlyphRun(0f, 0f, run, OS.DWRITE_MEASURING_MODE_NATURAL, null, 0);
+        if (colorGlyphRunEnumerator == null) {
+            // Could be DWRITE_E_NOCOLOR  indicating no colored glyphs or it could be allocation of the glyph
+            // enumerator failed - how to differentiate?
+        }
         target.DrawGlyphRun(pt, run, brush, OS.DWRITE_MEASURING_MODE_NATURAL);
         int hr = target.EndDraw();
         brush.Release();

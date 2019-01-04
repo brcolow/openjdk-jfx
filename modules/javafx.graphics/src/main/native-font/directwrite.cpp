@@ -162,6 +162,66 @@ jobject newDWRITE_GLYPH_METRICS(JNIEnv *env, DWRITE_GLYPH_METRICS *lpStruct)
     return lpObject;
 }
 
+typedef struct DWRITE_COLOR_GLYPH_RUN_FID_CACHE {
+    int cached;
+    jclass clazz;
+    jfieldID glyphRun, baselineOriginX, baselineOriginY, runColor, paletteIndex;
+    jmethodID init;
+} DWRITE_COLOR_GLYPH_RUN_FID_CACHE;
+
+DWRITE_COLOR_GLYPH_RUN_FID_CACHE DWRITE_COLOR_GLYPH_RUNFc;
+
+void cacheDWRITE_COLOR_GLYPH_RUNFields(JNIEnv *env)
+{
+    if (DWRITE_COLOR_GLYPH_RUNFc.cached) return;
+    jclass tmpClass = env->FindClass("com/sun/javafx/font/directwrite/DWRITE_COLOR_GLYPH_RUN");
+    if (checkAndClearException(env) || !tmpClass) {
+        fprintf(stderr, "cacheDWRITE_COLOR_GLYPH_RUNFields error: JNI exception or tmpClass == NULL");
+        return;
+    }
+    DWRITE_COLOR_GLYPH_RUNFc.clazz =  (jclass)env->NewGlobalRef(tmpClass);
+    DWRITE_COLOR_GLYPH_RUNFc.glyphRun = env->GetFieldID(DWRITE_COLOR_GLYPH_RUNFc.clazz, "glyphRun", "Lcom/sun/javafx/font/directwrite/DWRITE_GLYPH_RUN;");
+    if (checkAndClearException(env) || !DWRITE_COLOR_GLYPH_RUNFc.glyphRun) {
+        fprintf(stderr, "cacheDWRITE_COLOR_GLYPH_RUNFields error: JNI exception or glyphRun == NULL");
+        return;
+    }
+    DWRITE_COLOR_GLYPH_RUNFc.baselineOriginX = env->GetFieldID(DWRITE_COLOR_GLYPH_RUNFc.clazz, "baselineOriginX", "F");
+    if (checkAndClearException(env) || !DWRITE_COLOR_GLYPH_RUNFc.baselineOriginX) {
+        fprintf(stderr, "cacheDWRITE_COLOR_GLYPH_RUNFields error: JNI exception or baselineOriginX == NULL");
+        return;
+    }
+    DWRITE_COLOR_GLYPH_RUNFc.baselineOriginY = env->GetFieldID(DWRITE_COLOR_GLYPH_RUNFc.clazz, "baselineOriginY", "F");
+    if (checkAndClearException(env) || !DWRITE_COLOR_GLYPH_RUNFc.baselineOriginY) {
+        fprintf(stderr, "cacheDWRITE_COLOR_GLYPH_RUNFields error: JNI exception or baselineOriginY == NULL");
+        return;
+    }
+    DWRITE_COLOR_GLYPH_RUNFc.runColor = env->GetFieldID(DWRITE_COLOR_GLYPH_RUNFc.clazz, "runColor", "Lcom/sun/javafx/font/directwrite/D2D1_COLOR_F;");
+    if (checkAndClearException(env) || !DWRITE_COLOR_GLYPH_RUNFc.runColor) {
+        fprintf(stderr, "cacheDWRITE_COLOR_GLYPH_RUNFields error: JNI exception or runColor  == NULL");
+        return;
+    }
+    DWRITE_COLOR_GLYPH_RUNFc.dx = env->GetFieldID(DWRITE_COLOR_GLYPH_RUNFc.clazz, "paletteIndex", "I");
+    if (checkAndClearException(env) || !DWRITE_COLOR_GLYPH_RUNFc.dx) {
+        fprintf(stderr, "cacheDWRITE_COLOR_GLYPH_RUNFields error: JNI exception or dpaletteIndexx == NULL");
+        return;
+    }
+    DWRITE_COLOR_GLYPH_RUNFc.cached = 1;
+}
+
+DWRITE_COLOR_GLYPH_RUN *getDWRITE_COLOR_GLYPH_RUNFields(JNIEnv *env, jobject lpObject, DWRITE_COLOR_GLYPH_RUN *lpStruct)
+{
+    if (!DWRITE_COLOR_GLYPH_RUNFc.cached) cacheDWRITE_COLOR_GLYPH_RUNFields(env);
+    {
+    jobject lpObject1 = env->GetObjectField(lpObject, DWRITE_COLOR_GLYPH_RUNFc.glyphRun);
+    if (lpObject1 != NULL) setDWRITE_COLOR_GLYPH_RUNFields(env, lpObject1, &lpStruct->glyphRun);
+    }
+    lpStruct->baselineOriginX = env->GetFloatField(lpObject, DWRITE_COLOR_GLYPH_RUNFc.baselineOriginX);
+    lpStruct->baselineOriginY = env->GetFloatField(lpObject, DWRITE_COLOR_GLYPH_RUNFc.baselineOriginY);
+    lpStruct->runColor = env->GetFloatField(lpObject, DWRITE_COLOR_GLYPH_RUNFc.runColor);
+    lpStruct->paletteIndex = env->GetIntField(lpObject, DWRITE_COLOR_GLYPH_RUNFc.paletteIndex);
+    return lpStruct;
+}
+
 void setDWRITE_COLOR_GLYPH_RUNFields(JNIEnv *env, jobject lpObject, DWRITE_COLOR_GLYPH_RUN *lpStruct)
 {
     if (!DWRITE_GLYPH_METRICSFc.cached) cacheDWRITE_GLYPH_METRICSFields(env);
@@ -1984,6 +2044,9 @@ JNIEXPORT jlong JNICALL OS_NATIVE(TranslateColorGlyphRun)
                                                           (UINT32)arg6,
                                                           &result);
 
+    // How can we communicate the return code of TranslateColorGlyphRun (i.e. whether or not it is
+    // DWRITE_E_NOCOLOR indicating there are no colored glyphs) back up to Java when the return type
+    // is a IDWriteColorGlyphRunEnumerator?
 fail:
     delete [] _arg3.glyphIndices;
     delete [] _arg3.glyphAdvances;
