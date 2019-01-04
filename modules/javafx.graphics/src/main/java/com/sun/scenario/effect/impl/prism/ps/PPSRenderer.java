@@ -394,9 +394,11 @@ public class PPSRenderer extends PrRenderer {
             return null;
         }
         Screen screen = (Screen)ref;
-        ShaderSource shaderSource = null;
+        ShaderSource shaderSource;
         if (pipe.supportsShader(ShaderType.HLSL, ShaderModel.SM3)) {
             shaderSource = createShaderSource(rootPkg + ".impl.hw.d3d.D3DShaderSource");
+        } else if (pipe.supportsShader(ShaderType.HLSL, ShaderModel.SM5_0)) {
+            shaderSource = createShaderSource(rootPkg + "impl.hw.d3d11.D3D11ShaderSource");
         } else if (pipe.supportsShader(ShaderType.GLSL, ShaderModel.SM3)) {
             shaderSource = createShaderSource(rootPkg + ".impl.es2.ES2ShaderSource");
         } else {

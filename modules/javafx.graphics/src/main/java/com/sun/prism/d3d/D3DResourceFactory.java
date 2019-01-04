@@ -287,7 +287,7 @@ class D3DResourceFactory extends BaseShaderFactory {
         D3DVramPool pool = D3DVramPool.instance;
         int aaSamples;
         if (msaa) {
-            int maxSamples = D3DPipeline.getInstance().getMaxSamples();
+            int maxSamples = D3DPipeline.getInstance().getMaxSamples(context.getAssociatedScreen());
             aaSamples =  maxSamples < 2 ? 0 : (maxSamples < 4 ? 2 : 4);
         } else {
             aaSamples = 0;
@@ -436,6 +436,7 @@ class D3DResourceFactory extends BaseShaderFactory {
         return size;
     }
 
+    @Override
     public int getMaximumTextureSize() {
         return maxTextureSize;
     }

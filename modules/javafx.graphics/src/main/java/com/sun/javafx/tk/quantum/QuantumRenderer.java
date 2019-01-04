@@ -115,6 +115,7 @@ final class QuantumRenderer extends ThreadPoolExecutor  {
         public void cleanup() {
             GraphicsPipeline pipeline = GraphicsPipeline.getPipeline();
             if (pipeline != null) {
+                System.out.println("QuantumRenderer is calling dispose on pipeline");
                 pipeline.dispose();
             }
         }

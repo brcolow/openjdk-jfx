@@ -27,6 +27,7 @@ package com.sun.scenario.effect.compiler;
 
 import com.sun.scenario.effect.compiler.backend.hw.ES2Backend;
 import com.sun.scenario.effect.compiler.backend.hw.HLSLBackend;
+import com.sun.scenario.effect.compiler.backend.hw.ShaderModel;
 import com.sun.scenario.effect.compiler.backend.prism.PrismBackend;
 import com.sun.scenario.effect.compiler.backend.sw.java.JSWBackend;
 import com.sun.scenario.effect.compiler.backend.sw.me.MEBackend;
@@ -43,27 +44,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 /**
  */
 public class JSLC {
 
     public static final int OUT_NONE     = (0 << 0);
     public static final int OUT_D3D      = (1 << 0);
-    public static final int OUT_ES2      = (1 << 1);
-    public static final int OUT_JAVA     = (1 << 2);
-    public static final int OUT_PRISM    = (1 << 3);
+    public static final int OUT_D3D11    = (1 << 1);
+    public static final int OUT_ES2      = (1 << 2);
+    public static final int OUT_JAVA     = (1 << 3);
+    public static final int OUT_PRISM    = (1 << 4);
 
-    public static final int OUT_SSE_JAVA        = (1 << 4);
-    public static final int OUT_SSE_NATIVE      = (1 << 5);
-    public static final int OUT_ME_JAVA         = (1 << 6);
-    public static final int OUT_ME_NATIVE       = (1 << 7);
+    public static final int OUT_SSE_JAVA        = (1 << 5);
+    public static final int OUT_SSE_NATIVE      = (1 << 6);
+    public static final int OUT_ME_JAVA         = (1 << 7);
+    public static final int OUT_ME_NATIVE       = (1 << 8);
 
     public static final int OUT_ME       = OUT_ME_JAVA | OUT_ME_NATIVE;
     public static final int OUT_SSE      = OUT_SSE_JAVA | OUT_SSE_NATIVE;
 
     public static final int OUT_SW_PEERS   = OUT_JAVA | OUT_SSE;
     public static final int OUT_HW_PEERS   = OUT_PRISM;
-    public static final int OUT_HW_SHADERS = OUT_D3D | OUT_ES2;
+    public static final int OUT_HW_SHADERS = OUT_D3D | OUT_D3D11 | OUT_ES2;
     public static final int OUT_ALL        = OUT_SW_PEERS | OUT_HW_PEERS | OUT_HW_SHADERS;
 
     private static final String rootPkg = "com/sun/scenario/effect";
@@ -106,6 +109,7 @@ public class JSLC {
      *   /foo/bar/ + rootPkg + /impl/sw/sse
      *   /foo/bar/ + rootPkg + /impl/sw/me
      *   /foo/bar/ + rootPkg + /impl/hw/d3d/hlsl
+     *   /foo/bar/ + rootPkg + /impl/hw/d3d11/hlsl
      *   /foo/bar/ + rootPkg + /impl/es2/glsl
      *   /foo/bar/ + rootPkg + /impl/prism/ps
      *
@@ -115,12 +119,14 @@ public class JSLC {
      *   ../decora-sse/build/gensrc/     + rootPkg + /impl/sw/sse
      *   ../decora-me/build/gensrc/      + rootPkg + /impl/sw/me
      *   ../decora-d3d/build/gensrc/     + rootPkg + /impl/hw/d3d/hlsl
+     *   ../decora-d3d11/build/gensrc/   + rootPkg + /impl/hw/d3d11/hlsl
      *   ../decora-es2/build/gensrc/     + rootPkg + /impl/es2/glsl
      *   ../decora-prism-ps/build/gensrc/+ rootPkg + /impl/prism/ps
      */
     private static Map<Integer, String> initDefaultInfoMap() {
         Map<Integer, String> infoMap = new HashMap<Integer, String>();
         infoMap.put(OUT_D3D,        "decora-d3d/build/gensrc/{pkg}/impl/hw/d3d/hlsl/{name}.hlsl");
+        infoMap.put(OUT_D3D11,      "decora-d3d11/build/gensrc/{pkg}/impl/hw/d3d11/hlsl/{name}.hlsl");
         infoMap.put(OUT_ES2,        "decora-es2/build/gensrc/{pkg}/impl/es2/glsl/{name}.frag");
         infoMap.put(OUT_JAVA,       "decora-jsw/build/gensrc/{pkg}/impl/sw/java/JSW{name}Peer.java");
         infoMap.put(OUT_PRISM,      "decora-prism-ps/build/gensrc/{pkg}/impl/prism/ps/PPS{name}Peer.java");
@@ -192,7 +198,16 @@ public class JSLC {
             File outFile = jslcinfo.getOutputFile(OUT_D3D);
             if (jslcinfo.force || outOfDate(outFile, sourceTime)) {
                 if (pinfo == null) pinfo = getParserInfo(stream);
-                HLSLBackend hlslBackend = new HLSLBackend(pinfo.parser, pinfo.program);
+                HLSLBackend hlslBackend = new HLSLBackend(pinfo.parser, pinfo.program, ShaderModel.SM3);
+                write(hlslBackend.getShader(), outFile);
+            }
+        }
+
+        if ((outTypes & OUT_D3D11) != 0) {
+            File outFile = jslcinfo.getOutputFile(OUT_D3D11);
+            if (jslcinfo.force || outOfDate(outFile, sourceTime)) {
+                if (pinfo == null) pinfo = getParserInfo(stream);
+                HLSLBackend hlslBackend = new HLSLBackend(pinfo.parser, pinfo.program, ShaderModel.SM5_1);
                 write(hlslBackend.getShader(), outFile);
             }
         }
@@ -375,6 +390,8 @@ public class JSLC {
                 force = true;
             } else if (arg.equals("-d3d")) {
                 outTypes |= OUT_D3D;
+            } else if (arg.equals("-d3d11")) {
+                outTypes |= OUT_D3D11;
             } else if (arg.equals("-es2")) {
                 outTypes |= OUT_ES2;
             } else if (arg.equals("-java")) {

@@ -1232,7 +1232,7 @@ public final class QuantumToolkit extends Toolkit {
 
     @Override
     public boolean isMSAASupported() {
-        return  GraphicsPipeline.getPipeline().isMSAASupported();
+        return  GraphicsPipeline.getPipeline().isMSAASupported(Screen.getMainScreen());
     }
 
     static TransferMode clipboardActionToTransferMode(final int action) {

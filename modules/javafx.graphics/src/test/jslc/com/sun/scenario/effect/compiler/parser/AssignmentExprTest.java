@@ -26,18 +26,30 @@
 package com.sun.scenario.effect.compiler.parser;
 
 import com.sun.scenario.effect.compiler.JSLParser;
+import com.sun.scenario.effect.compiler.model.BinaryOpType;
 import com.sun.scenario.effect.compiler.model.Qualifier;
 import com.sun.scenario.effect.compiler.model.SymbolTable;
 import com.sun.scenario.effect.compiler.model.Type;
 import com.sun.scenario.effect.compiler.tree.BinaryExpr;
+import com.sun.scenario.effect.compiler.tree.LiteralExpr;
+import com.sun.scenario.effect.compiler.tree.VariableExpr;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class AssignmentExprTest extends ParserBase {
 
     @Test
     public void userVar() throws Exception {
         BinaryExpr tree = parseTreeFor("foo = 32.0");
+        assertEquals(Type.FLOAT, tree.getResultType());
+        assertEquals(BinaryOpType.EQ, tree.getOp());
+        assertEquals(VariableExpr.class, tree.getLeft().getClass());
+        assertEquals("foo", ((VariableExpr) tree.getLeft()).getVariable().getName());
+        assertEquals(Type.FLOAT, tree.getRight().getResultType());
+        assertEquals(LiteralExpr.class, tree.getRight().getClass());
+        assertEquals(32.0, ((LiteralExpr) tree.getRight()).getValue());
     }
 
     @Test(expected = RuntimeException.class)
@@ -48,6 +60,13 @@ public class AssignmentExprTest extends ParserBase {
     @Test
     public void coreVar() throws Exception {
         BinaryExpr tree = parseTreeFor("color = float4(1.0)");
+        assertEquals(Type.FLOAT4, tree.getResultType());
+        assertEquals(BinaryOpType.EQ, tree.getOp());
+        assertEquals(VariableExpr.class, tree.getLeft().getClass());
+        assertEquals("color", ((VariableExpr) tree.getLeft()).getVariable().getName());
+        assertEquals(Type.FLOAT4, tree.getRight().getResultType());
+        assertEquals(LiteralExpr.class, tree.getRight().getClass());
+        assertEquals(1.0, ((LiteralExpr) tree.getRight()).getValue());
     }
 
     @Test
@@ -58,6 +77,11 @@ public class AssignmentExprTest extends ParserBase {
     @Test(expected = RuntimeException.class)
     public void coreROVar() throws Exception {
         BinaryExpr tree = parseTreeFor("pos0 = float2(1.0)");
+        assertEquals(Type.FLOAT2, tree.getResultType());
+        assertEquals(BinaryOpType.EQ, tree.getOp());
+        assertEquals(Type.FLOAT2, tree.getRight().getResultType());
+        assertEquals(1.0, ((LiteralExpr) tree.getRight()).getValue());
+
     }
 
     @Test(expected = RuntimeException.class)

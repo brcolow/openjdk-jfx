@@ -34,8 +34,7 @@
  * D3DRTYPE_INDEXBUFFER
  */
 void
-D3DResource::Init(IDirect3DResource9 *pRes, IDirect3DSwapChain9 *pSC)
-{
+D3DResource::Init(IDirect3DResource9 *pRes, IDirect3DSwapChain9 *pSC) {
     TraceLn(NWT_TRACE_INFO, "D3DResource::Init");
 
     pDepthSurface = NULL;

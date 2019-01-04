@@ -245,18 +245,18 @@ public final class D3DPipeline extends GraphicsPipeline {
 
     private int maxSamples = -1;
 
-    int getMaxSamples() {
+    int getMaxSamples(Screen screen) {
         if (maxSamples < 0) {
-            isMSAASupported();
+            isMSAASupported(screen);
         }
         return maxSamples;
     }
 
     @Override
-    public boolean isMSAASupported() {
+    public boolean isMSAASupported(Screen screen) {
         if (maxSamples < 0) {
             //TODO: 3D - consider different adapters
-            maxSamples = nGetMaxSampleSupport(0);
+            maxSamples = nGetMaxSampleSupport(screen.getAdapterOrdinal());
         }
         return maxSamples > 0;
     }

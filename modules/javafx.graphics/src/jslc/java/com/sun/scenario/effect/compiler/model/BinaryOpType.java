@@ -33,11 +33,13 @@ public enum BinaryOpType {
     SUB  ("-",  Op.MATH),
     MUL  ("*",  Op.MATH),
     DIV  ("/",  Op.MATH),
+    MOD  ("%",  Op.MATH),
     EQ   ("=",  Op.ASSIGN),
     ADDEQ("+=", Op.ASSIGN),
     SUBEQ("-=", Op.ASSIGN),
     MULEQ("*=", Op.ASSIGN),
     DIVEQ("/=", Op.ASSIGN),
+    MODEQ("%=", Op.ASSIGN),
     OR   ("||", Op.REL),
     XOR  ("^^", Op.REL),
     AND  ("&&", Op.REL),
@@ -46,9 +48,25 @@ public enum BinaryOpType {
     LTEQ ("<=", Op.REL),
     GTEQ (">=", Op.REL),
     LT   ("<",  Op.REL),
-    GT   (">",  Op.REL);
+    GT   (">",  Op.REL),
+    NOT  ("~",  Op.BIT),
+    LSHFT("<<", Op.BIT),
+    RSHFT(">>", Op.BIT),
+    LAND ("&",  Op.BIT),
+    LOR  ("|", Op.BIT),
+    LXOR ("^", Op.BIT),
+    LSEQ ("<<=", Op.BIT),
+    RSEQ (">>=", Op.BIT),
+    ANDEQ("&=", Op.BIT),
+    OREQ ("|=", Op.BIT),
+    XOREQ("^=", Op.BIT);
 
-    private enum Op { MATH, ASSIGN, REL }
+    // FIXME: How to represent BITwise operators are only enabled in shader model 4.0+ ?? Maybe we dont have to
+    // at this level.
+    // Bitwise operators are defined to operate only on int and uint data types
+    // Unlike short-circuit evaluation of &&, ||, and ?: in C, HLSL expressions never short-circuit
+    // an evaluation because they are vector operations. All sides of the expression are always evaluated.
+    private enum Op { MATH, ASSIGN, REL, BIT }
     private String symbol;
     private Op op;
 

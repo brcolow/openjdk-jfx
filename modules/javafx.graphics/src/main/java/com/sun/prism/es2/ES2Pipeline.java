@@ -206,7 +206,7 @@ public class ES2Pipeline extends GraphicsPipeline {
     }
 
     @Override
-    public final boolean isMSAASupported() {
+    public final boolean isMSAASupported(Screen screen) {
         return msaa;
     }
 

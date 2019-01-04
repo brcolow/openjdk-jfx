@@ -27,6 +27,7 @@ package com.sun.scenario.effect.compiler.model;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  */
@@ -67,16 +68,7 @@ public class Function {
             return false;
         }
         final Function other = (Function) obj;
-        if (this.name != other.name && (this.name == null || !this.name.equals(other.name))) {
-            return false;
-        }
-        if (this.returnType != other.returnType) {
-            return false;
-        }
-        if (this.params != other.params && (this.params == null || !this.params.equals(other.params))) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.name, other.name) && this.returnType == other.returnType && Objects.equals(this.params, other.params);
     }
 
     @Override

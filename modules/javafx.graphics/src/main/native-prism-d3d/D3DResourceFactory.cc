@@ -144,7 +144,7 @@ JNIEXPORT jlong JNICALL Java_com_sun_prism_d3d_D3DResourceFactory_nCreateSwapCha
 
     HWND hWnd = (HWND)(jlong_to_ptr(hwnd));
     if (!::IsWindow(hWnd)) {
-        TraceLn1(NWT_TRACE_ERROR, "nGetSwapChain: hwnd=%x is not a window\n", hWnd);
+        // FIXME: Do we really need to check?
         return 0L;
     }
 

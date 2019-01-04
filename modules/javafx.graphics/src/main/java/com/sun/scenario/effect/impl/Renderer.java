@@ -288,17 +288,6 @@ public abstract class Renderer {
     }
 
     /**
-     * This method can be used by subclasses to create a backup renderer,
-     * either a SW (Java) renderer or an SSE (native) renderer, depending
-     * on what is available.
-     *
-     * @return an instance of Renderer that uses CPU filtering
-     */
-    protected static Renderer getSoftwareRenderer() {
-        return RendererFactory.getSoftwareRenderer();
-    }
-
-    /**
      * Returns an instance of backup renderer to be used if this renderer
      * is in {@code LOST} state.
      *

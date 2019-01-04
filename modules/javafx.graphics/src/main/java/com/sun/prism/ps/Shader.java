@@ -52,4 +52,6 @@ public interface Shader extends GraphicsResource {
     public void setConstant(String name, float f0, float f1, float f2);
     public void setConstant(String name, float f0, float f1, float f2, float f3);
     public void setConstants(String name, FloatBuffer buf, int off, int count);
+
+
 }

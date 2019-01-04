@@ -465,6 +465,7 @@ public class CompileJSL {
         JSLCInfo jslcinfo = new JSLCInfo();
         Map<Integer, String> nameMap = jslcinfo.outNameMap;
         nameMap.put(JSLC.OUT_D3D, "prism-d3d/build/gensrc/{pkg}/d3d/hlsl/{name}.hlsl");
+        nameMap.put(JSLC.OUT_D3D11, "prism-d3d/build/gensrc/{pkg}/d3d11/hlsl/{name}.hlsl");
         nameMap.put(JSLC.OUT_ES2, "prism-es2/build/gensrc/{pkg}/es2/glsl/{name}.frag");
         jslcinfo.parseAllArgs(args);
 
@@ -496,6 +497,7 @@ public class CompileJSL {
             // create the basic Solid+Texture* shaders
             compileSolidTexture(jslcinfo, "RGB", alphaTest);
             compileMaskTexture(jslcinfo, "RGB", alphaTest);
+            // FIXME: This is where Super is generated !!!
             compileMaskTexture(jslcinfo, "Super", alphaTest);
             compileSolidTexture(jslcinfo, "YV12", alphaTest);
             compileSolidTexture(jslcinfo, "FirstPassLCD", alphaTest);

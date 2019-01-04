@@ -1431,6 +1431,8 @@ void addNative(Project project, String name) {
 
 void addJSL(Project project, String name, String pkg, List<String> addExports, Closure compile) {
     def lowerName = name.toLowerCase()
+    def d3dPkg = pkg + "/d3d/hlsl"
+    def d3d11Pkg = pkg + "/d3d11/hlsl"
 
     def modulePath = "${project.sourceSets.main.java.outputDir}"
     modulePath += File.pathSeparator + "${rootProject.projectDir}/modules/javafx.base/build/classes/java/main"
@@ -1471,22 +1473,39 @@ void addJSL(Project project, String name, String pkg, List<String> addExports, C
             dependsOn: generateShaders,
             type: CompileHLSLTask) {
         enabled = IS_WINDOWS
+        shaderVer = "ps_3_0"
         description = "Compile $name HLSL files into .obj files"
         matches = ".*\\.hlsl"
-        output project.file("$project.buildDir/hlsl/$name/$pkg")
-        source project.file("$project.buildDir/gensrc/jsl-$lowerName/$pkg")
+        output project.file("$project.buildDir/hlsl/$name/$d3dPkg")
+        source project.file("$project.buildDir/gensrc/jsl-$lowerName/$d3dPkg")
+    }
+
+    def compileHLSL5Shaders = project.task("compile${name}HLSL5Shaders",
+            dependsOn: generateShaders,
+            type: CompileHLSLTask) {
+        enabled = IS_WINDOWS
+        shaderVer = "ps_5_1"
+        // FIXME: What about vertex shaders?
+        description = "Compile $name HLSL files into .obj files"
+        matches = ".*\\.hlsl"
+        output project.file("$project.buildDir/hlsl5/$name/$d3d11Pkg")
+        source project.file("$project.buildDir/gensrc/jsl-$lowerName/$d3d11Pkg")
     }
 
     def processShaders = project.task("process${name}Shaders",
-            dependsOn: [generateShaders, compileHLSLShaders],
+            dependsOn: [generateShaders, compileHLSLShaders, compileHLSL5Shaders],
             type: Copy,
             description: "Copy hlsl / frag shaders to build/resources/jsl-$lowerName") {
         from("$project.buildDir/hlsl/$name") {
             include "**/*.obj"
         }
+        from("$project.buildDir/hlsl5/$name") {
+            include "**/*.obj"
+        }
         from("$project.buildDir/gensrc/jsl-$lowerName") {
             include("**/*.frag")
         }
+        // FIXME: Will hlsl5 shaders overwrite hlsl shaders?
         into project.moduleDir
     }
 
@@ -1494,7 +1513,7 @@ void addJSL(Project project, String name, String pkg, List<String> addExports, C
     project.sourceSets.shaders.output.dir("$project.buildDir/gensrc/jsl-$lowerName", builtBy: processShaders )
 
     def processShimsShaders = project.task("process${name}ShimsShaders",
-            dependsOn: [generateShaders, compileHLSLShaders],
+            dependsOn: [generateShaders, compileHLSLShaders, compileHLSL5Shaders],
             type: Copy,
             description: "Copy hlsl / frag shaders to shims") {
         from("$project.buildDir/hlsl/$name") {
@@ -1937,15 +1956,15 @@ project(":graphics") {
     We have two shader groups - Decora and Prism.
 
     The shader groups each will generate a custom compiler that
-    then genarates the shader code. These compilers rely on the JSLC
-    gramar parser which is antlr generated and compile separately.
+    then generates the shader code. These compilers rely on the JSLC
+    grammar parser which is antlr generated and compiled separately.
 
     The decora compiler relies on compileJava - which is sourceSet.main.java
-    It also accesses module private packages, so will need add-exports
+    It also accesses module private packages, so will need add-exports.
 
-    Once the shader java code is generated, we can compileFullJava
+    Once the shader java code is generated, we can compileFullJava.
 
-    After that, we can generate the required native header and then build the native code
+    After that, we can generate the required native header and then build the native code.
     */
 
     project.task("processShaders") {
@@ -1961,7 +1980,7 @@ project(":graphics") {
     // Generate the JSLC support grammar
     project.task("generateGrammarSource", type: JavaExec) {
         // use antlr to generate our grammar.
-        // note: the antlr plugin creates some issues with the other compiles
+        // note: the antlr plugin creates some issues with the other compilers
         // so we will do this by hand
 
         File wd = file(project.projectDir.path + "/src/jslc/antlr")
@@ -1982,7 +2001,6 @@ project(":graphics") {
         outputs.dir file("$buildDir/gensrc/antlr")
     }
     sourceSets.jslc.java.srcDirs += "$buildDir/gensrc/antlr"
-
     // and compile the JSLC support classes
     compileJslcJava.dependsOn(generateGrammarSource)
     compileJslcJava.classpath = project.configurations.antlr
@@ -2128,6 +2146,24 @@ project(":graphics") {
         ccWinPrismD3D.dependsOn generateD3DHeaders
     }
 
+    if (IS_WINDOWS) {
+        addNative(project, "prismD3D11")
+
+        // FXC = location of fxc.exe HLSL offline compiler
+        // /D arguments = define macro
+        task generateD3D11Headers(group: "Build") {
+            enabled = IS_WINDOWS
+            // inputs.file "src/main/native-prism-d3d/hlsl/Mtl1PS.hlsl"
+            // inputs.file "src/main/native-prism-d3d/hlsl/Mtl1VS.hlsl"
+            // inputs.file "src/main/native-prism-d3d/PassThroughVS.hlsl"
+            outputs.dir "$buildDir/headers/PrismD3D/"
+            outputs.dir "$buildDir/headers/PrismD3D/hlsl/"
+            description = "Generate headers by compiling hlsl files"
+        }
+
+        ccWinPrismD3D11.dependsOn generateD3D11Headers
+    }
+
     // The Decora and Prism JSL files have to be generated in a very specific set of steps.
     //      1) Compile the *Compile.java classes. These live in src/main/jsl-* and will be
     //         output to $buildDir/classes/jsl-compilers/* (where * == decora or prism).
@@ -2145,7 +2181,7 @@ project(":graphics") {
 
     def modulePath = "${project.sourceSets.main.java.outputDir}"
     modulePath += File.pathSeparator + "${rootProject.projectDir}/modules/javafx.base/build/classes/java/main"
-    addJSL(project, "Decora", "com/sun/scenario/effect/impl/hw/d3d/hlsl", decoraAddExports) { sourceDir, destinationDir ->
+    addJSL(project, "Decora", "com/sun/scenario/effect/impl/hw", decoraAddExports) { sourceDir, destinationDir ->
         [[fileName: "ColorAdjust", generator: "CompileJSL", outputs: "-all"],
          [fileName: "Brightpass", generator: "CompileJSL", outputs: "-all"],
          [fileName: "SepiaTone", generator: "CompileJSL", outputs: "-all"],
@@ -2241,7 +2277,7 @@ project(":graphics") {
     }
 
     // Prism JSL
-    addJSL(project, "Prism", "com/sun/prism/d3d/hlsl", null) { sourceDir, destinationDir ->
+    addJSL(project, "Prism", "com/sun/prism", null) { sourceDir, destinationDir ->
         def inputFiles = fileTree(dir: sourceDir)
         inputFiles.include "**/*.jsl"
         inputFiles.each { file ->
@@ -2254,7 +2290,7 @@ project(":graphics") {
                 classpath += files(project.sourceSets.jslc.resources)
                 classpath += files("$buildDir/classes/jsl-compilers/prism",
                     project.projectDir.path + "/src/main/jsl-prism") // for the .stg
-                args = ["-i", sourceDir, "-o", destinationDir, "-t", "-pkg", "com/sun/prism", "-d3d", "-es2", "-name", "$file"]
+                args = ["-i", sourceDir, "-o", destinationDir, "-t", "-pkg", "com/sun/prism", "-d3d", "-d3d11", "-es2", "-name", "$file"]
             }
         }
     }
@@ -4520,9 +4556,11 @@ compileTargets { t ->
                     exclude ("**/*.hlsl",
                              "com/sun/glass/ui/win",
                              "com/sun/prism/d3d",
+                             "com/sun/prism/d3d11",
                              "com/sun/prism/es2/WinGL*",
-                             "com/sun/scenario/effect/impl/hw/d3d"
-                             )
+                             "com/sun/scenario/effect/impl/hw/d3d",
+                             "com/sun/scenario/effect/impl/hw/d3d11"
+                    )
                 }
 
                 if (!targetProperties.includeGTK) { //usually IS_LINUX
@@ -4659,7 +4697,8 @@ compileTargets { t ->
                 }
             }
             if (IS_WINDOWS) {
-                from ("${graphicsProject.buildDir}/libs/prismD3D/${t.name}/${library(targetProperties.prismD3D.lib)}");
+                from ("${graphicsProject.buildDir}/libs/prismD3D/${t.name}/${library(targetProperties.prismD3D.lib)}")
+                from ("${graphicsProject.buildDir}/libs/prismD3D11/${t.name}/${library(targetProperties.prismD3D11.lib)}");
                 targetProperties.VS2017DLLs.each { vslib ->
                     from ("$vslib");
                 }

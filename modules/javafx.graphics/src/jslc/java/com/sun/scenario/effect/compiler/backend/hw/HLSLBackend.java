@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2008, 2019, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -27,6 +27,7 @@ package com.sun.scenario.effect.compiler.backend.hw;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import com.sun.scenario.effect.compiler.JSLParser;
 import com.sun.scenario.effect.compiler.model.BaseType;
 import com.sun.scenario.effect.compiler.model.Function;
@@ -42,49 +43,76 @@ import com.sun.scenario.effect.compiler.tree.VarDecl;
  */
 public class HLSLBackend extends SLBackend {
 
-    public HLSLBackend(JSLParser parser, ProgramUnit program) {
+    private final ShaderModel shaderModel;
+    private final Map<String, String> typeMap = new HashMap<>();
+    private final Map<String, String> qualMap = new HashMap<>();
+    private final Map<String, String> funcMap = new HashMap<>();
+    private final Map<String, String> varMap = new HashMap<>();
+
+    public HLSLBackend(JSLParser parser, ProgramUnit program, ShaderModel shaderModel) {
         super(parser, program);
+        this.shaderModel = shaderModel;
+        initTypeMap();
+        initQualMap();
+        initFuncMap();
     }
 
-    private static final Map<String, String> qualMap = new HashMap<String, String>();
-    static {
-        qualMap.put("const", "");
-        qualMap.put("param", "");
+    private void initTypeMap() {
+        if (shaderModel.supports(ShaderModel.SM3)) {
+            typeMap.put("void", "void");
+            typeMap.put("float", "float");
+            typeMap.put("float2", "float2");
+            typeMap.put("float3", "float3");
+            typeMap.put("float4", "float4");
+            typeMap.put("int", "int");
+            typeMap.put("int2", "int2");
+            typeMap.put("int3", "int3");
+            typeMap.put("int4", "int4");
+            typeMap.put("bool", "bool");
+            typeMap.put("bool2", "bool2");
+            typeMap.put("bool3", "bool3");
+            typeMap.put("bool4", "bool4");
+            typeMap.put("sampler", "sampler2D");
+            typeMap.put("lsampler", "sampler2D");
+            typeMap.put("fsampler", "sampler2D");
+        }
+        if (shaderModel.supports(ShaderModel.SM5_0)) {
+
+        }
+        if (shaderModel.supports(ShaderModel.SM5_1)) {
+
+        }
     }
 
-    private static final Map<String, String> typeMap = new HashMap<String, String>();
-    static {
-        typeMap.put("void",    "void");
-        typeMap.put("float",   "float");
-        typeMap.put("float2",  "float2");
-        typeMap.put("float3",  "float3");
-        typeMap.put("float4",  "float4");
-        typeMap.put("int",     "int");
-        typeMap.put("int2",    "int2");
-        typeMap.put("int3",    "int3");
-        typeMap.put("int4",    "int4");
-        typeMap.put("bool",    "bool");
-        typeMap.put("bool2",   "bool2");
-        typeMap.put("bool3",   "bool3");
-        typeMap.put("bool4",   "bool4");
-        typeMap.put("sampler", "sampler2D");
-        typeMap.put("lsampler","sampler2D");
-        typeMap.put("fsampler","sampler2D");
+    private void initQualMap() {
+        if (shaderModel.supports(ShaderModel.SM3)) {
+            qualMap.put("const", "");
+            qualMap.put("param", "");
+        }
+        if (shaderModel.supports(ShaderModel.SM5_0)) {
+
+        }
+        if (shaderModel.supports(ShaderModel.SM5_1)) {
+
+        }
     }
 
-    private static final Map<String, String> varMap = new HashMap<String, String>();
-    static {
-    }
+    private void initFuncMap() {
+        if (shaderModel.supports(ShaderModel.SM3)) {
+            funcMap.put("sample", "tex2D");
+            funcMap.put("fract", "frac");
+            funcMap.put("mix", "lerp");
+            funcMap.put("mod", "fmod");
+            funcMap.put("intcast", "int");
+            funcMap.put("any", "any");
+            funcMap.put("length", "length");
+        }
+        if (shaderModel.supports(ShaderModel.SM5_0)) {
 
-    private static final Map<String, String> funcMap = new HashMap<String, String>();
-    static {
-        funcMap.put("sample", "tex2D");
-        funcMap.put("fract", "frac");
-        funcMap.put("mix", "lerp");
-        funcMap.put("mod", "fmod");
-        funcMap.put("intcast", "int");
-        funcMap.put("any", "any");
-        funcMap.put("length", "length");
+        }
+        if (shaderModel.supports(ShaderModel.SM5_1)) {
+
+        }
     }
 
     @Override
@@ -156,20 +184,15 @@ public class HLSLBackend extends SLBackend {
             //     float variableName : register(c0);
             // and using SetPixelShaderConstantF() instead.
             String t;
-            switch (type) {
-            case INT:
+            if (type == Type.INT) {
                 t = "float";
-                break;
-            case INT2:
+            } else if (type == Type.INT2) {
                 t = "float2";
-                break;
-            case INT3:
+            } else if (type == Type.INT3) {
                 t = "float3";
-                break;
-            case INT4:
+            } else if (type == Type.INT4) {
                 t = "float4";
-                break;
-            default:
+            } else {
                 throw new InternalError();
             }
             output(t + " " + var.getName());

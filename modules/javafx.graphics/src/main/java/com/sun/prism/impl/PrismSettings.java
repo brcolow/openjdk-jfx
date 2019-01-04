@@ -212,7 +212,7 @@ public final class PrismSettings {
             tryOrderArr = split(order, ",");
         } else {
             if (PlatformUtil.isWindows()) {
-                tryOrderArr = new String[] { "d3d", "sw" };
+                tryOrderArr = new String[] { "d3d11", "d3d", "sw" };
             } else if (PlatformUtil.isMac()) {
                 tryOrderArr = new String[] { "es2", "sw" };
             } else if (PlatformUtil.isIOS()) {
@@ -301,6 +301,8 @@ public final class PrismSettings {
 
         allowHiDPIScaling = getBoolean(systemProperties, "prism.allowhidpi", true);
 
+        // TODO: What about querying the GraphicsPipeline (especially on d3d11 where its easy)
+        // for max vram? See https://stackoverflow.com/questions/35527315/directx-get-vram-used-by-game
         maxVram = getLong(systemProperties, "prism.maxvram", 512 * 1024 * 1024,
                           "Try -Dprism.maxvram=<long>[kKmMgG]");
         targetVram = getLong(systemProperties, "prism.targetvram", maxVram / 8, maxVram,

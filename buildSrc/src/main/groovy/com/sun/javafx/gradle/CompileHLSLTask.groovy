@@ -23,14 +23,18 @@
  * questions.
  */
 
+import org.gradle.api.tasks.Optional
+
 class CompileHLSLTask extends NativeCompileTask {
+    @Optional String shaderVer = "ps_3_0"
+
     protected File outputFile(File sourceFile) {
         new File("$output/${sourceFile.name.replace('.hlsl', '.obj')}");
     }
 
     protected void doCompile(File sourceFile, File outputFile){
         project.exec({
-            commandLine = ["$project.FXC", "/nologo", "/T", "ps_3_0", "/Fo", "$outputFile", "$sourceFile"]
+            commandLine = ["$project.FXC", "/nologo", "/T", "$shaderVer", "/Fo", "$outputFile", "$sourceFile"]
             environment(project.WINDOWS_NATIVE_COMPILE_ENVIRONMENT);
         });
     }

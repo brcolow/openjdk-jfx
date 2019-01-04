@@ -371,6 +371,20 @@ WIN.prismD3D.rcCompiler = rcCompiler;
 WIN.prismD3D.rcSource = defaultRcSource
 WIN.prismD3D.rcFlags = ["/d", "JFX_FNAME=prism_d3d.dll", "/d", "JFX_INTERNAL_NAME=prismD3D", rcFlags].flatten();
 
+WIN.prismD3D11 = [:]
+WIN.prismD3D11.javahInclude = ["com/sun/prism/d3d11/**/*"]
+WIN.prismD3D11.nativeSource = [
+        file("${project("graphics").projectDir}/src/main/native-prism-d3d11"),
+        file("${project("graphics").projectDir}/src/main/native-prism-d3d11/hlsl")]
+WIN.prismD3D11.compiler = compiler
+WIN.prismD3D11.ccFlags = [ccFlags, "/Ibuild/headers/PrismD3D11"].flatten()
+WIN.prismD3D11.linker = linker
+WIN.prismD3D11.linkFlags = [linkFlags, "user32.lib"].flatten()
+WIN.prismD3D11.lib = "prism_d3d11"
+WIN.prismD3D11.rcCompiler = rcCompiler;
+WIN.prismD3D11.rcSource = defaultRcSource
+WIN.prismD3D11.rcFlags = ["/d", "JFX_FNAME=prism_d3d11.dll", "/d", "JFX_INTERNAL_NAME=prismD3D11", rcFlags].flatten();
+
 WIN.iio = [:]
 WIN.iio.javahInclude = ["com/sun/javafx/iio/**/*"]
 WIN.iio.nativeSource = [

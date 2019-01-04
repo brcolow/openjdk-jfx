@@ -63,9 +63,11 @@ IOS.jfxrtJarExcludes = [
     "**/*.hlsl",
     "com/sun/glass/ui/win",
     "com/sun/prism/d3d",
+    "com/sun/prism/d3d11",
     "com/sun/prism/es2/gl/win",
     "com/sun/prism/null3d",
     "com/sun/scenario/effect/impl/hw/d3d",
+    "com/sun/scenario/effect/impl/hw/d3d11",
 
     "com/sun/glass/events/mac",
     "com/sun/glass/ui/mac",

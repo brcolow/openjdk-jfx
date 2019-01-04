@@ -37,7 +37,7 @@ import java.util.Map;
 
 public abstract class GraphicsPipeline {
 
-    public static enum ShaderType {
+    public enum ShaderType {
         /**
          * The pipeline supports shaders built with the D3D HLSL shader language.
          */
@@ -48,13 +48,34 @@ public abstract class GraphicsPipeline {
         GLSL
     }
 
-    public static enum ShaderModel {
+    public enum ShaderModel {
         /**
          * The pipeline supports Shader Model 3 features, including Pixel Shader
          * 3.0 and Vertex Shader 3.0 programs.
          */
-        SM3
+        SM3(3.0),
+        /**
+         * The pipeline supports Shader Model 5 features, including Pixel Shader
+         * 5.0 and Vertex Shader 5.0 programs.
+         */
+        SM5_0(5.0),
+        /**
+         * The pipeline supports Shader Model 5 features, including Pixel Shader
+         * 5.1 and Vertex Shader 5.1 programs.
+         */
+        SM5_1(5.1);
+
+        private final double version;
+
+        ShaderModel(double version) {
+            this.version = version;
+        }
+
+        public boolean supports(ShaderModel other) {
+            return version >= other.version;
+        }
     }
+
     private FontFactory fontFactory;
 
     public abstract boolean init();
@@ -77,7 +98,7 @@ public abstract class GraphicsPipeline {
 
     public abstract boolean is3DSupported();
 
-    public boolean isMSAASupported() { return false; }
+    public boolean isMSAASupported(Screen screen) { return false; }
 
     public abstract boolean isVsyncSupported();
 

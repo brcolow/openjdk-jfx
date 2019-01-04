@@ -50,6 +50,10 @@ import com.sun.scenario.effect.impl.sw.RendererDelegate;
 
 import static com.sun.scenario.effect.impl.Renderer.RendererState.*;
 
+/**
+ * Prism Software Renderer which uses either an SSE (native) renderer or, as a fall-back in case
+ * SSE is not supported by the run-time processor a Java renderer.
+ */
 public class PSWRenderer extends PrRenderer {
 
     private final Screen screen;
@@ -125,6 +129,13 @@ public class PSWRenderer extends PrRenderer {
      * @return an {@code SSE} (SIMD/CPU) renderer
      */
     private synchronized static PSWRenderer createSSEInstance(Screen screen) {
+        // FIXME: Check if host supports SSE - also make sure to change the build.gradle
+        // compilation of the SSE effects to only use SSE intrinsics - because what happens
+        // if we build/compile JavaFX on a host that supports, say, AVX2, and then the user
+        // running it doesn't - will crash! Maybe that's why createJSWInstance was
+        // use explicitly instead of createRenderer - but then SSE effects will never be run!
+        // The ideal thing to do would be to extend JSLC to support SSE 2/3/4, AVX and AVX2, and
+        // create effect peers for all of them. Then instantiate whichever one the host supports.
         PSWRenderer ret = null;
         try {
             Class klass = Class.forName(rootPkg + ".impl.sw.sse.SSERendererDelegate");

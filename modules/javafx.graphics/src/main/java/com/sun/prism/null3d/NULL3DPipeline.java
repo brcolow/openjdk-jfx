@@ -89,7 +89,7 @@ public class NULL3DPipeline extends GraphicsPipeline {
     }
 
     @Override
-    public boolean isMSAASupported() {
+    public boolean isMSAASupported(Screen screen) {
         return true;
     }
 
