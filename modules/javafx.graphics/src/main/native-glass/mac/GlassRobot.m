@@ -33,7 +33,7 @@
 #import "GlassKey.h"
 #import "GlassHelper.h"
 
-//#define VERBOSE
+#define VERBOSE
 #ifndef VERBOSE
     #define LOG(MSG, ...)
 #else
@@ -143,6 +143,8 @@ static inline void PostGlassKeyEvent(jint code, BOOL keyPressed)
 
 - (void)mouseMove:(NSPoint)p
 {
+    LOG("native mac robot: mouseMove");
+
     CGPoint location = NSPointToCGPoint(p);
     UInt32 buttons = self->mouseButtons;
     CGEventType type=kCGEventMouseMoved;
@@ -155,16 +157,21 @@ static inline void PostGlassKeyEvent(jint code, BOOL keyPressed)
             {
                 case 0:
                     type = kCGEventLeftMouseDragged;
+                    LOG("type = kCGEventLeftMouseDragged");
                     break;
                 case 1:
                     type = kCGEventRightMouseDragged;
+                    LOG("type = kCGEventRightMouseDragged");
+
                     break;
                 default:
                     type = kCGEventOtherMouseDragged;
+                    LOG("type = kCGEventOtherMouseDragged");
                     break;
             }
         }
     }
+    LOG("button = %d", index);
     CGEventRef newEvent = CGEventCreateMouseEvent(NULL, type, location, (CGMouseButton)index);
     CGEventPost(kCGHIDEventTap, newEvent);
     CGWarpMouseCursorPosition(location);
