@@ -1,4 +1,7 @@
-param ([switch]$nocygwin = $false)
+param (
+[switch]$nocygwin = $false,
+[parameter(ValueFromRemainingArguments)][String[]]$args
+)
 
 choco install ant
 choco install vswhere
@@ -62,7 +65,7 @@ if ($env:APPVEYOR -eq "true") {
   }
 } else {
   if ($noCygwin) {
-    .\gradlew all test -PCOMPILE_WEBKIT=false -PCONF=Debug -PUSE_CYGWIN=false --stacktrace -x :web:test --info --no-daemon
+    .\gradlew all test -PCOMPILE_WEBKIT=false -PCONF=DebugNative -PUSE_CYGWIN=false  -PFULL_TEST=true -PUSE_ROBOT=true --stacktrace -x :web:test --info --no-daemon $args
   } else {
     .\gradlew all test -PCOMPILE_WEBKIT=false -PCONF=Debug --stacktrace -x :web:test --info --no-daemon
   }
