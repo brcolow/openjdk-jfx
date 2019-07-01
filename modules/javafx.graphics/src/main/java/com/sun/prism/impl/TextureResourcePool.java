@@ -33,6 +33,13 @@ import com.sun.prism.PixelFormat;
  * the size of a potential new texture allocation.
  */
 public interface TextureResourcePool<T> extends ResourcePool<T> {
-    public long estimateTextureSize(int width, int height, PixelFormat format);
-    public long estimateRTTextureSize(int width, int height, boolean hasDepth);
+    default long estimateTextureSize(int width, int height, PixelFormat format) {
+        return ((long) width) * ((long) height) *
+                ((long) format.getBytesPerPixelUnit());
+    }
+
+    default long estimateRTTextureSize(int width, int height, boolean hasDepth) {
+        // REMIND: need to deal with size of depth buffer, etc.
+        return ((long) width) * ((long) height) * 4L;
+    }
 }
