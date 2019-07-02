@@ -25,6 +25,8 @@
 
 package com.sun.prism.es2;
 
+import com.sun.prism.MeshView;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -124,9 +126,8 @@ class ES2PhongShader {
                 SpecularState.COLOR : SpecularState.NONE;
     }
 
-    static ES2Shader getShader(ES2MeshView meshView, ES2Context context) {
-
-        ES2PhongMaterial material = meshView.getMaterial();
+    static ES2Shader getShader(MeshView meshView, ES2Context context) {
+        ES2PhongMaterial material = (ES2PhongMaterial) meshView.getMaterial();
 
         DiffuseState diffuseState = DiffuseState.DIFFUSECOLOR;
         if (material.maps[ES2PhongMaterial.DIFFUSE].getTexture() != null) {
@@ -146,7 +147,7 @@ class ES2PhongShader {
         }
 
         int numLights = 0;
-        for (ES2Light light : meshView.getPointLights()) {
+        for (ES2Light light : ((ES2MeshView) meshView).getPointLights()) {
             if (light != null && light.w > 0) { numLights++; }
         }
 
@@ -185,7 +186,7 @@ class ES2PhongShader {
 
     static void setShaderParamaters(ES2Shader shader, ES2MeshView meshView, ES2Context context) {
 
-        ES2PhongMaterial material = meshView.getMaterial();
+        ES2PhongMaterial material = (ES2PhongMaterial) meshView.getMaterial();
 
         shader.setConstant("diffuseColor", material.diffuseColor.getRed(),
                 material.diffuseColor.getGreen(), material.diffuseColor.getBlue(),

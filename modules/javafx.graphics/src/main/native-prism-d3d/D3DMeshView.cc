@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2013, 2019, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -40,8 +40,7 @@ D3DMeshView::~D3DMeshView() {
 
 }
 
-D3DMeshView::D3DMeshView(D3DContext *ctx, D3DMesh *pMesh) {
-    context = ctx;
+D3DMeshView::D3DMeshView(D3DMesh *pMesh) {
     mesh = pMesh;
     material = NULL;
     ambientLightColor[0] = 0;
@@ -208,4 +207,36 @@ void D3DMeshView::render() {
     SUCCEEDED(device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0,
             mesh->getNumVertices(), 0, (mesh->getNumIndices()/3)));
 
+}
+
+/*
+ * Class:     com_sun_prism_d3d_D3DMeshView
+ * Method:    nCreateD3DMeshView
+ * Signature: (J)J
+ */
+JNIEXPORT jlong JNICALL Java_com_sun_prism_d3d_D3DMeshView_nCreateD3DMeshView
+  (JNIEnv *env, jclass, jlong nativeMesh)
+{
+    TraceLn(NWT_TRACE_INFO, "D3DMeshView_nCreateD3DMeshView");
+
+    D3DMesh *mesh = (D3DMesh *) jlong_to_ptr(nativeMesh);
+    RETURN_STATUS_IF_NULL(mesh, 0L);
+
+    D3DMeshView *meshView = new D3DMeshView(mesh);
+    return ptr_to_jlong(meshView);
+}
+
+/*
+ * Class:     com_sun_prism_d3d_D3DMeshView
+ * Method:    nReleaseD3DMeshView
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_prism_d3d_D3DMeshView_nReleaseD3DMeshView
+  (JNIEnv *env, jclass, jlong nativeMeshView)
+{
+    TraceLn(NWT_TRACE_INFO, "D3DMeshView_nReleaseD3DMeshView");
+    D3DMeshView *meshView = (D3DMeshView *) jlong_to_ptr(nativeMeshView);
+    if (meshView) {
+        delete meshView;
+    }
 }

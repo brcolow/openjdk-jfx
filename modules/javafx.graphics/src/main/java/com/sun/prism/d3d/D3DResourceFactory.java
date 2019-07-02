@@ -488,7 +488,7 @@ class D3DResourceFactory extends BaseShaderFactory {
 
     @Override
     public Mesh createMesh() {
-        return D3DMesh.create(context);
+        return D3DMesh.create();
     }
 
     static native long nGetContext(int adapterOrdinal);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, 2018, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2008, 2019, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -35,6 +35,7 @@ import com.sun.javafx.sg.prism.NGCamera;
 import com.sun.javafx.sg.prism.NGDefaultCamera;
 import com.sun.prism.CompositeMode;
 import com.sun.prism.Graphics;
+import com.sun.prism.Material;
 import com.sun.prism.MeshView;
 import com.sun.prism.RTTexture;
 import com.sun.prism.RenderTarget;
@@ -308,6 +309,7 @@ class D3DContext extends BaseShaderContext {
         validate(res);
     }
 
+    @Override
     protected void updateWorldTransform(BaseTransform xform) {
         if ((xform == null) || xform.isIdentity()) {
             nSetWorldTransformToIdentity(pContext);
@@ -400,22 +402,6 @@ class D3DContext extends BaseShaderContext {
     private static native int nSetDeviceParametersFor2D(long pContext);
     private static native int nSetDeviceParametersFor3D(long pContext);
 
-    private static native long nCreateD3DMesh(long pContext);
-    private static native void nReleaseD3DMesh(long pContext, long nativeHandle);
-    private static native boolean nBuildNativeGeometryShort(long pContext, long nativeHandle,
-            float[] vertexBuffer, int vertexBufferLength, short[] indexBuffer, int indexBufferLength);
-    private static native boolean nBuildNativeGeometryInt(long pContext, long nativeHandle,
-            float[] vertexBuffer, int vertexBufferLength, int[] indexBuffer, int indexBufferLength);
-    private static native long nCreateD3DPhongMaterial(long pContext);
-    private static native void nReleaseD3DPhongMaterial(long pContext, long nativeHandle);
-    private static native void nSetDiffuseColor(long pContext, long nativePhongMaterial,
-            float r, float g, float b, float a);
-    private static native void nSetSpecularColor(long pContext, long nativePhongMaterial,
-            boolean set, float r, float g, float b, float a);
-    private static native void nSetMap(long pContext, long nativePhongMaterial,
-            int mapType, long texID);
-    private static native long nCreateD3DMeshView(long pContext, long nativeMesh);
-    private static native void nReleaseD3DMeshView(long pContext, long nativeHandle);
     private static native void nSetCullingMode(long pContext, long nativeMeshView,
             int cullingMode);
     private static native void nSetMaterial(long pContext, long nativeMeshView,
@@ -473,58 +459,8 @@ class D3DContext extends BaseShaderContext {
         nSetDeviceParametersFor3D(pContext);
     }
 
-    long createD3DMesh() {
-        return nCreateD3DMesh(pContext);
-    }
-
-    // TODO: 3D - Should this be called dispose?
-    void releaseD3DMesh(long nativeHandle) {
-        nReleaseD3DMesh(pContext, nativeHandle);
-    }
-
-    boolean buildNativeGeometry(long nativeHandle, float[] vertexBuffer, int vertexBufferLength,
-            short[] indexBuffer, int indexBufferLength) {
-        return nBuildNativeGeometryShort(pContext, nativeHandle, vertexBuffer,
-                vertexBufferLength, indexBuffer, indexBufferLength);
-    }
-
-    boolean buildNativeGeometry(long nativeHandle, float[] vertexBuffer, int vertexBufferLength,
-            int[] indexBuffer, int indexBufferLength) {
-        return nBuildNativeGeometryInt(pContext, nativeHandle, vertexBuffer,
-                vertexBufferLength, indexBuffer, indexBufferLength);
-    }
-
-    long createD3DPhongMaterial() {
-        return nCreateD3DPhongMaterial(pContext);
-    }
-
-    // TODO: 3D - Should this be called dispose?
-    void releaseD3DPhongMaterial(long nativeHandle) {
-        nReleaseD3DPhongMaterial(pContext, nativeHandle);
-    }
-
-    void setDiffuseColor(long nativePhongMaterial, float r, float g, float b, float a) {
-        nSetDiffuseColor(pContext, nativePhongMaterial, r, g, b, a);
-    }
-
-    void setSpecularColor(long nativePhongMaterial, boolean set, float r, float g, float b, float a) {
-        nSetSpecularColor(pContext, nativePhongMaterial, set, r, g, b, a);
-    }
-
-    void setMap(long nativePhongMaterial, int mapType, long nativeTexture) {
-        nSetMap(pContext, nativePhongMaterial, mapType, nativeTexture);
-    }
-
-    long createD3DMeshView(long nativeMesh) {
-        return nCreateD3DMeshView(pContext, nativeMesh);
-    }
-
-    // TODO: 3D - Should this be called dispose?
-    void releaseD3DMeshView(long nativeMeshView) {
-        nReleaseD3DMeshView(pContext, nativeMeshView);
-    }
-
-    void setCullingMode(long nativeMeshView, int cullMode) {
+    @Override
+    public void setCullingMode(long nativeMeshView, int cullMode) {
         int cm;
         if (cullMode == MeshView.CULL_NONE) {
             cm = CULL_NONE;
@@ -538,19 +474,24 @@ class D3DContext extends BaseShaderContext {
         nSetCullingMode(pContext, nativeMeshView, cm);
     }
 
-    void setMaterial(long nativeMeshView, long nativePhongMaterial) {
-        nSetMaterial(pContext, nativeMeshView, nativePhongMaterial);
+    @Override
+    public void setMaterial(long nativeMeshView, Material material) {
+        nSetMaterial(pContext, nativeMeshView, material.getNativeHandle());
     }
 
-    void setWireframe(long nativeMeshView, boolean wireframe) {
+    @Override
+    public void setWireframe(long nativeMeshView, boolean wireframe) {
          nSetWireframe(pContext, nativeMeshView, wireframe);
     }
 
-    void setAmbientLight(long nativeMeshView, float r, float g, float b) {
+    @Override
+    public void setAmbientLight(long nativeMeshView, float r, float g, float b) {
         nSetAmbientLight(pContext, nativeMeshView, r, g, b);
     }
 
-    void setPointLight(long nativeMeshView, int index, float x, float y, float z, float r, float g, float b, float w) {
+    @Override
+    public void setPointLight(long nativeMeshView, int index, float x, float y, float z,
+                              float r, float g, float b, float w) {
         nSetPointLight(pContext, nativeMeshView, index, x, y, z, r, g, b, w);
     }
 
@@ -560,7 +501,8 @@ class D3DContext extends BaseShaderContext {
         D3DContext.validate(res);
     }
 
-    void renderMeshView(long nativeMeshView, Graphics g) {
+    @Override
+    public void renderMeshView(long nativeMeshView, Graphics g, MeshView ignored) {
 
         // Support retina display by scaling the projViewTx and pass it to the shader.
         scratchTx = scratchTx.set(projViewTx);

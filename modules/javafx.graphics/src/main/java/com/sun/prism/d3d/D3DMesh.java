@@ -32,59 +32,40 @@ import com.sun.prism.impl.Disposer;
  * TODO: 3D - Need documentation
  */
 class D3DMesh extends BaseMesh {
-    static int count = 0;
 
-    private final D3DContext context;
-    private final long nativeHandle;
-
-    private D3DMesh(D3DContext context, long nativeHandle, Disposer.Record disposerRecord) {
-        super(disposerRecord);
-        this.context = context;
-        this.nativeHandle = nativeHandle;
-        count++;
+    private D3DMesh(long nativeHandle, Disposer.Record disposerRecord) {
+        super(disposerRecord, nativeHandle);
     }
 
-    static D3DMesh create(D3DContext context) {
-        long nativeHandle = context.createD3DMesh();
-        return new D3DMesh(context, nativeHandle, new D3DMeshDisposerRecord(context, nativeHandle));
+    static D3DMesh create() {
+        long nativeHandle = nCreateD3DMesh();
+        return new D3DMesh(nativeHandle, new D3DMeshDisposerRecord(nativeHandle));
     }
 
-    long getNativeHandle() {
-        return nativeHandle;
+    private static native boolean nBuildNativeGeometryShort(long nativeHandle, float[] vertexBuffer,
+                                                            int vertexBufferLength, short[] indexBuffer,
+                                                            int indexBufferLength);
+    private static native boolean nBuildNativeGeometryInt(long nativeHandle, float[] vertexBuffer,
+                                                          int vertexBufferLength, int[] indexBuffer,
+                                                          int indexBufferLength);
+    private static native long nCreateD3DMesh();
+    private static native void nReleaseD3DMesh(long nativeHandle);
+
+    @Override
+    public boolean buildNativeGeometry(float[] vertexBuffer, int vertexBufferLength, int[] indexBufferInt, int indexBufferLength) {
+        return nBuildNativeGeometryInt(getNativeHandle(), vertexBuffer, vertexBufferLength, indexBufferInt, indexBufferLength);
     }
 
     @Override
-    public void dispose() {
-        disposerRecord.dispose();
-        count--;
-    }
-
-    @Override
-    public int getCount() {
-        return count;
-    }
-
-    @Override
-    public boolean buildNativeGeometry(float[] vertexBuffer, int vertexBufferLength,
-            int[] indexBufferInt, int indexBufferLength) {
-        return context.buildNativeGeometry(nativeHandle, vertexBuffer,
-                vertexBufferLength, indexBufferInt, indexBufferLength);
-    }
-
-    @Override
-    public boolean buildNativeGeometry(float[] vertexBuffer, int vertexBufferLength,
-            short[] indexBufferShort, int indexBufferLength) {
-        return context.buildNativeGeometry(nativeHandle, vertexBuffer,
-                vertexBufferLength, indexBufferShort, indexBufferLength);
+    public boolean buildNativeGeometry(float[] vertexBuffer, int vertexBufferLength, short[] indexBufferShort, int indexBufferLength) {
+        return nBuildNativeGeometryShort(getNativeHandle(), vertexBuffer, vertexBufferLength, indexBufferShort, indexBufferLength);
     }
 
     static class D3DMeshDisposerRecord implements Disposer.Record {
 
-        private final D3DContext context;
         private long nativeHandle;
 
-        D3DMeshDisposerRecord(D3DContext context, long nativeHandle) {
-            this.context = context;
+        D3DMeshDisposerRecord(long nativeHandle) {
             this.nativeHandle = nativeHandle;
         }
 
@@ -94,7 +75,7 @@ class D3DMesh extends BaseMesh {
         public void dispose() {
             if (nativeHandle != 0L) {
                 traceDispose();
-                context.releaseD3DMesh(nativeHandle);
+                nReleaseD3DMesh(nativeHandle);
                 nativeHandle = 0L;
             }
         }

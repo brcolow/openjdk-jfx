@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2013, 2019, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -33,7 +33,7 @@
 
 class D3DMeshView {
 public:
-    D3DMeshView(D3DContext *pCtx, D3DMesh *pMesh);
+    D3DMeshView(D3DMesh *pMesh);
     virtual ~D3DMeshView();
     void setCullingMode(int cMode);
     void setMaterial(D3DPhongMaterial *pMaterial);
@@ -45,7 +45,6 @@ public:
     void render();
 
 private:
-    D3DContext *context;
     D3DMesh *mesh;
     D3DPhongMaterial *material;
     D3DLight lights[3];

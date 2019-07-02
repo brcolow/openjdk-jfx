@@ -38,6 +38,4 @@ public interface Mesh extends GraphicsResource {
             float texCoords[],  int[] texCoordsFromAndLengthIndices,
             int faces[],  int[] facesFromAndLengthIndices,
             int faceSmoothingGroups[], int[] faceSmoothingGroupsFromAndLengthIndices);
-
-    public int getCount();
 }

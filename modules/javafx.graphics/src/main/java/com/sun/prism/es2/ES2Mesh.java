@@ -32,16 +32,12 @@ import com.sun.prism.impl.Disposer;
  * TODO: 3D - Need documentation
  */
 class ES2Mesh extends BaseMesh {
-    static int count = 0;
 
-    private final ES2Context context;
-    private final long nativeHandle;
+    ES2Context context;
 
     private ES2Mesh(ES2Context context, long nativeHandle, Disposer.Record disposerRecord) {
-        super(disposerRecord);
+        super(disposerRecord, nativeHandle);
         this.context = context;
-        this.nativeHandle = nativeHandle;
-        count++;
     }
 
     static ES2Mesh create(ES2Context context) {
@@ -49,32 +45,14 @@ class ES2Mesh extends BaseMesh {
         return new ES2Mesh(context, nativeHandle, new ES2MeshDisposerRecord(context, nativeHandle));
     }
 
-    long getNativeHandle() {
-        return nativeHandle;
+    @Override
+    public boolean buildNativeGeometry(float[] vertexBuffer, int vertexBufferLength, int[] indexBufferInt, int indexBufferLength) {
+        return context.buildNativeGeometry(getNativeHandle(), vertexBuffer, vertexBufferLength, indexBufferInt, indexBufferLength);
     }
 
     @Override
-    public void dispose() {
-        disposerRecord.dispose();
-        count--;
-    }
-
-    public int getCount() {
-        return count;
-    }
-
-    @Override
-    public boolean buildNativeGeometry(float[] vertexBuffer, int vertexBufferLength,
-            int[] indexBufferInt, int indexBufferLength) {
-        return context.buildNativeGeometry(nativeHandle, vertexBuffer,
-                vertexBufferLength, indexBufferInt, indexBufferLength);
-    }
-
-    @Override
-    public boolean buildNativeGeometry(float[] vertexBuffer, int vertexBufferLength,
-            short[] indexBufferShort, int indexBufferLength) {
-        return context.buildNativeGeometry(nativeHandle, vertexBuffer,
-                vertexBufferLength, indexBufferShort, indexBufferLength);
+    public boolean buildNativeGeometry(float[] vertexBuffer, int vertexBufferLength, short[] indexBufferShort, int indexBufferLength) {
+        return context.buildNativeGeometry(getNativeHandle(), vertexBuffer, vertexBufferLength, indexBufferShort, indexBufferLength);
     }
 
     static class ES2MeshDisposerRecord implements Disposer.Record {

@@ -175,7 +175,7 @@ public class ES2Shader extends BaseGraphicsResource implements Shader {
     }
 
     static String readStreamIntoString(InputStream in) {
-        StringBuffer sb = new StringBuffer(1024);
+        StringBuilder sb = new StringBuilder(1024);
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         try {
             char[] chars = new char[1024];
@@ -550,7 +550,7 @@ public class ES2Shader extends BaseGraphicsResource implements Shader {
      * @throws RuntimeException if no OpenGL context was current or if any
      * OpenGL-related errors occurred
      */
-    public void setMatrix(String name, float buf[]) throws RuntimeException {
+    public void setMatrix(String name, float[] buf) throws RuntimeException {
         int loc = getUniform(name).location;
         if (loc == -1) {
             return;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -37,7 +37,7 @@
 
 class D3DPhongMaterial {
 public:
-    D3DPhongMaterial(D3DContext *pCtx);
+    D3DPhongMaterial();
     virtual ~D3DPhongMaterial();
     void setDiffuseColor(float r, float g, float b, float a);
     float *getDiffuseColor();
@@ -51,7 +51,6 @@ public:
     IDirect3DBaseTexture9 * getMap(int type);
 
 private:
-    D3DContext *context;
     float diffuseColor[4], specularColor[4];
     IDirect3DBaseTexture9 *map[4];
     bool specularColorSet;

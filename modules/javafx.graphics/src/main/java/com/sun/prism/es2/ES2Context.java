@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009, 2018, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2019, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -37,6 +37,7 @@ import com.sun.javafx.sg.prism.NGDefaultCamera;
 import com.sun.prism.CompositeMode;
 import com.sun.prism.Graphics;
 import com.sun.prism.Material;
+import com.sun.prism.MeshView;
 import com.sun.prism.RTTexture;
 import com.sun.prism.RenderTarget;
 import com.sun.prism.Texture;
@@ -138,7 +139,7 @@ class ES2Context extends BaseShaderContext {
         return pixelFormat;
     }
 
-    ES2Shader getPhongShader(ES2MeshView meshView) {
+    ES2Shader getPhongShader(MeshView meshView) {
         return ES2PhongShader.getShader(meshView, this);
     }
 
@@ -398,7 +399,7 @@ class ES2Context extends BaseShaderContext {
     }
 
     boolean buildNativeGeometry(long nativeHandle, float[] vertexBuffer,
-            int vertexBufferLength, int[] indexBuffer, int indexBufferLength) {
+                                       int vertexBufferLength, int[] indexBuffer, int indexBufferLength) {
         return glContext.buildNativeGeometry(nativeHandle, vertexBuffer,
                 vertexBufferLength, indexBuffer, indexBufferLength);
     }
@@ -429,27 +430,33 @@ class ES2Context extends BaseShaderContext {
         glContext.releaseES2MeshView(nativeHandle);
     }
 
-    void setCullingMode(long nativeHandle, int cullingMode) {
+    @Override
+    public void setCullingMode(long nativeHandle, int cullingMode) {
         // NOTE: Native code has set clockwise order as front-facing
         glContext.setCullingMode(nativeHandle, cullingMode);
     }
 
-    void setMaterial(long nativeHandle, Material material) {
-        ES2PhongMaterial es2Material = (ES2PhongMaterial)material;
+    @Override
+    public void setMaterial(long nativeHandle, Material material) {
+        ES2PhongMaterial es2Material = (ES2PhongMaterial) material;
 
         glContext.setMaterial(nativeHandle,
                 (es2Material).getNativeHandle());
     }
 
-    void setWireframe(long nativeHandle, boolean wireframe) {
+    @Override
+    public void setWireframe(long nativeHandle, boolean wireframe) {
        glContext.setWireframe(nativeHandle, wireframe);
     }
 
-    void setAmbientLight(long nativeHandle, float r, float g, float b) {
+    @Override
+    public void setAmbientLight(long nativeHandle, float r, float g, float b) {
         glContext.setAmbientLight(nativeHandle, r, g, b);
     }
 
-    void setPointLight(long nativeHandle, int index, float x, float y, float z, float r, float g, float b, float w) {
+    @Override
+    public void setPointLight(long nativeHandle, int index, float x, float y, float z,
+                              float r, float g, float b, float w) {
         glContext.setPointLight(nativeHandle, index, x, y, z, r, g, b, w);
     }
 
@@ -466,9 +473,10 @@ class ES2Context extends BaseShaderContext {
                           dstX0, dstY0, dstX1, dstY1);
     }
 
-    void renderMeshView(long nativeHandle, Graphics g, ES2MeshView meshView) {
+    @Override
+    public void renderMeshView(long nativeHandle, Graphics g, MeshView meshView) {
 
-        ES2Shader shader = (ES2Shader) getPhongShader(meshView);
+        ES2Shader shader = getPhongShader(meshView);
         setShaderProgram(shader.getProgramObject());
 
         // Support retina display by scaling the projViewTx and pass it to the shader.
@@ -501,7 +509,7 @@ class ES2Context extends BaseShaderContext {
         shader.setMatrix("worldMatrix", rawMatrix);
 //        printRawMatrix("worldMatrix");
 
-        ES2PhongShader.setShaderParamaters(shader, meshView, this);
+        ES2PhongShader.setShaderParamaters(shader, (ES2MeshView) meshView, this);
 
         glContext.renderMeshView(nativeHandle);
     }

@@ -40,6 +40,7 @@ public interface MeshView {
 
     public void setCullingMode(int mode);
 
+    public Material getMaterial();
     public void setMaterial(Material material);
 
     public void setWireframe(boolean wireframe);
@@ -51,4 +52,5 @@ public interface MeshView {
             float r, float g, float b, float w);
 
     public void render(Graphics g);
+
 }

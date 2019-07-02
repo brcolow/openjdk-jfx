@@ -34,7 +34,7 @@
 
 class D3DMesh {
 public:
-    D3DMesh(D3DContext *pCtx);
+    D3DMesh();
     virtual ~D3DMesh();
     boolean buildBuffers(float *vertexBuffer, UINT vertexBufferSize,
             USHORT *indexBuffer, UINT indexBufferSize);
@@ -47,7 +47,6 @@ public:
     UINT getNumIndices();
 
 private:
-    D3DContext *context;
     IDirect3DIndexBuffer9 *indexBuffer;
     IDirect3DVertexBuffer9 *vertexBuffer;
     DWORD fvf;

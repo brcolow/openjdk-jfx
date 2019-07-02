@@ -32,6 +32,9 @@ import com.sun.javafx.geom.transform.BaseTransform;
 import com.sun.javafx.geom.transform.GeneralTransform3D;
 import com.sun.javafx.sg.prism.NGCamera;
 import com.sun.prism.CompositeMode;
+import com.sun.prism.Graphics;
+import com.sun.prism.Material;
+import com.sun.prism.MeshView;
 import com.sun.prism.PixelFormat;
 import com.sun.prism.RTTexture;
 import com.sun.prism.RenderTarget;
@@ -217,6 +220,19 @@ public abstract class BaseShaderContext extends BaseContext {
     protected abstract void updateClipRect(Rectangle clipRect);
 
     protected abstract void updateCompositeMode(CompositeMode mode);
+
+    public abstract void setCullingMode(long nativeMeshView, int cullMode);
+
+    public abstract void setMaterial(long nativeHandle, Material material);
+
+    public abstract void setWireframe(long nativeMeshView, boolean wireframe);
+
+    public abstract void setAmbientLight(long nativeHandle, float r, float g, float b);
+
+    public abstract void setPointLight(long nativeHandle, int index, float x, float y, float z,
+                                       float r, float g, float b, float w);
+
+    public abstract void renderMeshView(long nativeHandle, Graphics g, MeshView meshView);
 
     private static int getStockShaderIndex(MaskType maskType, Paint paint) {
         int paintType;

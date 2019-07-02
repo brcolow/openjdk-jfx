@@ -32,7 +32,6 @@ using std::endl;
 
 // Destructor definition
 D3DPhongMaterial::~D3DPhongMaterial() {
-    context = NULL;
     // The freeing of texture native resources is handled by its Java layer.
     map[DIFFUSE] = NULL;
     map[SPECULAR] = NULL;
@@ -40,8 +39,7 @@ D3DPhongMaterial::~D3DPhongMaterial() {
     map[SELFILLUMINATION] = NULL;
 }
 
-D3DPhongMaterial::D3DPhongMaterial(D3DContext *ctx) {
-    context = ctx;
+D3DPhongMaterial::D3DPhongMaterial() {
     diffuseColor[0] = 0;
     diffuseColor[1] = 0;
     diffuseColor[2] = 0;
@@ -112,4 +110,80 @@ void D3DPhongMaterial::setMap(int mapID, IDirect3DBaseTexture9 *texMap) {
     } else {
         cerr << "D3DPhongMaterial::getMap -- mapID is out of range - mapID = " << mapID << endl;
     }
+}
+
+/*
+ * Class:     com_sun_prism_d3d_D3DPhongMaterial
+ * Method:    nCreateD3DPhongMaterial
+ * Signature: ()J
+ */
+JNIEXPORT jlong JNICALL Java_com_sun_prism_d3d_D3DPhongMaterial_nCreateD3DPhongMaterial
+  (JNIEnv *env, jclass)
+{
+    TraceLn(NWT_TRACE_INFO, "D3DPhongMaterial_nCreateD3DPhongMaterial");
+    D3DPhongMaterial *phongMaterial = new D3DPhongMaterial();
+    return ptr_to_jlong(phongMaterial);
+}
+
+/*
+ * Class:     com_sun_prism_d3d_D3DPhongMaterial
+ * Method:    nReleaseD3DPhongMaterial
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_prism_d3d_D3DPhongMaterial_nReleaseD3DPhongMaterial
+  (JNIEnv *env, jclass, jlong nativePhongMaterial)
+{
+    TraceLn(NWT_TRACE_INFO, "D3DPhongMaterial_nReleaseD3DPhongMaterial");
+    D3DPhongMaterial *phongMaterial = (D3DPhongMaterial *) jlong_to_ptr(nativePhongMaterial);
+    if (phongMaterial) {
+        delete phongMaterial;
+    }
+}
+
+/*
+ * Class:     com_sun_prism_d3d_D3DPhongMaterial
+ * Method:    nSetDiffuseColor
+ * Signature: (JFFFF)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_prism_d3d_D3DPhongMaterial_nSetDiffuseColor
+  (JNIEnv *env, jclass, jlong nativePhongMaterial,
+        jfloat r, jfloat g, jfloat b, jfloat a)
+{
+    TraceLn(NWT_TRACE_INFO, "D3DPhongMaterial_nSetDiffuseColor");
+    D3DPhongMaterial *phongMaterial = (D3DPhongMaterial *) jlong_to_ptr(nativePhongMaterial);
+    RETURN_IF_NULL(phongMaterial);
+
+    phongMaterial->setDiffuseColor(r, g, b, a);
+}
+
+/*
+ * Class:     com_sun_prism_d3d_D3DPhongMaterial
+ * Method:    nSetSpecularColor
+ * Signature: (JZFFFF)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_prism_d3d_D3DPhongMaterial_nSetSpecularColor
+  (JNIEnv *env, jclass, jlong nativePhongMaterial,
+        jboolean set, jfloat r, jfloat g, jfloat b, jfloat a)
+{
+    TraceLn(NWT_TRACE_INFO, "D3DPhongMaterialnSetSpecularColor");
+    D3DPhongMaterial *phongMaterial = (D3DPhongMaterial *) jlong_to_ptr(nativePhongMaterial);
+    RETURN_IF_NULL(phongMaterial);
+
+    phongMaterial->setSpecularColor(set ? true : false, r, g, b, a);
+}
+/*
+ * Class:     com_sun_prism_d3d_D3DPhongMaterial
+ * Method:    nSetMap
+ * Signature: (JIJ)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_prism_d3d_D3DPhongMaterial_nSetMap
+  (JNIEnv *env, jclass, jlong nativePhongMaterial,
+        jint mapType, jlong nativeTexture)
+{
+    TraceLn(NWT_TRACE_INFO, "D3DPhongMaterial_nSetMap");
+    D3DPhongMaterial *phongMaterial = (D3DPhongMaterial *) jlong_to_ptr(nativePhongMaterial);
+    IDirect3DBaseTexture9 *texMap = (IDirect3DBaseTexture9 *)  jlong_to_ptr(nativeTexture);
+    RETURN_IF_NULL(phongMaterial);
+
+    phongMaterial->setMap(mapType, texMap);
 }

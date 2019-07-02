@@ -42,7 +42,7 @@ class D3DPhongMaterial extends BaseGraphicsResource implements PhongMaterial {
 
     private final D3DContext context;
     private final long nativeHandle;
-    private TextureMap maps[] = new TextureMap[MAX_MAP_TYPE];
+    private TextureMap[] maps = new TextureMap[MAX_MAP_TYPE];
 
     private D3DPhongMaterial(D3DContext context, long nativeHandle,
             Disposer.Record disposerRecord) {
@@ -53,22 +53,23 @@ class D3DPhongMaterial extends BaseGraphicsResource implements PhongMaterial {
     }
 
     static D3DPhongMaterial create(D3DContext context) {
-        long nativeHandle = context.createD3DPhongMaterial();
-        return new D3DPhongMaterial(context, nativeHandle, new D3DPhongMaterialDisposerRecord(context, nativeHandle));
+        long nativeHandle = nCreateD3DPhongMaterial();
+        return new D3DPhongMaterial(context, nativeHandle, new D3DPhongMaterialDisposerRecord(nativeHandle));
     }
 
-    long getNativeHandle() {
+    @Override
+    public long getNativeHandle() {
         return nativeHandle;
     }
 
     @Override
     public void setDiffuseColor(float r, float g, float b, float a) {
-        context.setDiffuseColor(nativeHandle, r, g, b, a);
+        nSetDiffuseColor(nativeHandle, r, g, b, a);
     }
 
     @Override
     public void setSpecularColor(boolean set, float r, float g, float b, float a) {
-        context.setSpecularColor(nativeHandle, set, r, g, b, a);
+        nSetSpecularColor(nativeHandle, set, r, g, b, a);
     }
 
     @Override
@@ -81,7 +82,7 @@ class D3DPhongMaterial extends BaseGraphicsResource implements PhongMaterial {
         Texture texture = (image == null) ? null
                 : context.getResourceFactory().getCachedTexture(image, Texture.WrapMode.REPEAT, useMipmap);
         long hTexture = (texture != null) ? ((D3DTexture) texture).getNativeTextureObject() : 0;
-        context.setMap(nativeHandle, map.getType().ordinal(), hTexture);
+        nSetMap(nativeHandle, map.getType().ordinal(), hTexture);
         return texture;
     }
 
@@ -124,17 +125,24 @@ class D3DPhongMaterial extends BaseGraphicsResource implements PhongMaterial {
         count--;
     }
 
+    private static native long nCreateD3DPhongMaterial();
+    private static native void nReleaseD3DPhongMaterial(long nativeHandle);
+    private static native void nSetDiffuseColor(long nativePhongMaterial,
+                                                float r, float g, float b, float a);
+    private static native void nSetSpecularColor(long nativePhongMaterial,
+                                                 boolean set, float r, float g, float b, float a);
+    private static native void nSetMap(long nativePhongMaterial,
+                                       int mapType, long texID);
+
     public int getCount() {
         return count;
     }
 
     static class D3DPhongMaterialDisposerRecord implements Disposer.Record {
 
-        private final D3DContext context;
         private long nativeHandle;
 
-        D3DPhongMaterialDisposerRecord(D3DContext context, long nativeHandle) {
-            this.context = context;
+        D3DPhongMaterialDisposerRecord(long nativeHandle) {
             this.nativeHandle = nativeHandle;
         }
 
@@ -144,7 +152,7 @@ class D3DPhongMaterial extends BaseGraphicsResource implements PhongMaterial {
         public void dispose() {
             if (nativeHandle != 0L) {
                 traceDispose();
-                context.releaseD3DPhongMaterial(nativeHandle);
+                nReleaseD3DPhongMaterial(nativeHandle);
                 nativeHandle = 0L;
             }
         }

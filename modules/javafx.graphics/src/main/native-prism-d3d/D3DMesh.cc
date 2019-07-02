@@ -38,9 +38,8 @@ D3DMesh::~D3DMesh() {
     context = NULL;
 }
 
-D3DMesh::D3DMesh(D3DContext *ctx) {
+D3DMesh::D3DMesh() {
     //    cout << "*** D3DMesh Constructor called." << endl;
-    context = ctx;
     indexBuffer = NULL;
     vertexBuffer = NULL;
     // See MeshData.cc where n = 1
@@ -214,4 +213,117 @@ UINT D3DMesh::getNumVertices() {
 
 UINT D3DMesh::getNumIndices() {
     return numIndices;
+}
+
+/*
+ * Class:     com_sun_prism_d3d_D3DMesh
+ * Method:    nCreateD3DMesh
+ * Signature: ()J
+ */
+JNIEXPORT jlong JNICALL Java_com_sun_prism_d3d_D3DMesh_nCreateD3DMesh
+  (JNIEnv *env, jclass)
+{
+    TraceLn(NWT_TRACE_INFO, "D3DMesh_nCreateD3DMesh");
+    D3DMesh *mesh = new D3DMesh();
+    return ptr_to_jlong(mesh);
+}
+
+/*
+ * Class:     com_sun_prism_d3d_D3DMesh
+ * Method:    nReleaseD3DMesh
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_prism_d3d_D3DMesh_nReleaseD3DMesh
+  (JNIEnv *env, jclass, jlong nativeMesh)
+{
+    TraceLn(NWT_TRACE_INFO, "D3DMesh_nReleaseD3DMesh");
+    D3DMesh *mesh = (D3DMesh *) jlong_to_ptr(nativeMesh);
+    if (mesh) {
+        delete mesh;
+    }
+}
+
+/*
+ * Class:     com_sun_prism_d3d_D3DMesh
+ * Method:    nBuildNativeGeometryShort
+ * Signature: (J[FI[SI)Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_sun_prism_d3d_D3DMesh_nBuildNativeGeometryShort
+  (JNIEnv *env, jclass, jlong nativeMesh, jfloatArray vb, jint vbSize, jshortArray ib, jint ibSize)
+{
+    TraceLn(NWT_TRACE_INFO, "D3DMesh_nBuildNativeGeometryShort");
+    D3DMesh *mesh = (D3DMesh *) jlong_to_ptr(nativeMesh);
+    RETURN_STATUS_IF_NULL(mesh, JNI_FALSE);
+
+    if (vbSize < 0 || ibSize < 0) {
+        return JNI_FALSE;
+    }
+
+    UINT uvbSize = (UINT) vbSize;
+    UINT uibSize = (UINT) ibSize;
+    UINT vertexBufferSize = env->GetArrayLength(vb);
+    UINT indexBufferSize = env->GetArrayLength(ib);
+
+    if (uvbSize > vertexBufferSize || uibSize > indexBufferSize) {
+        return JNI_FALSE;
+    }
+
+    float *vertexBuffer = (float *) (env->GetPrimitiveArrayCritical(vb, NULL));
+    if (vertexBuffer == NULL) {
+        return JNI_FALSE;
+    }
+
+    USHORT *indexBuffer = (USHORT *) (env->GetPrimitiveArrayCritical(ib, NULL));
+    if (indexBuffer == NULL) {
+        env->ReleasePrimitiveArrayCritical(vb, vertexBuffer, 0);
+        return JNI_FALSE;
+    }
+
+    boolean result = mesh->buildBuffers(vertexBuffer, uvbSize, indexBuffer, uibSize);
+    env->ReleasePrimitiveArrayCritical(ib, indexBuffer, 0);
+    env->ReleasePrimitiveArrayCritical(vb, vertexBuffer, 0);
+
+    return result;
+}
+
+/*
+ * Class:     com_sun_prism_d3d_D3DMesh
+ * Method:    nBuildNativeGeometryInt
+ * Signature: (J[FI[II)Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_sun_prism_d3d_D3DMesh_nBuildNativeGeometryInt
+  (JNIEnv *env, jclass, jlong nativeMesh, jfloatArray vb, jint vbSize, jintArray ib, jint ibSize)
+{
+    TraceLn(NWT_TRACE_INFO, "D3DMesh_nBuildNativeGeometryInt");
+    D3DMesh *mesh = (D3DMesh *) jlong_to_ptr(nativeMesh);
+    RETURN_STATUS_IF_NULL(mesh, JNI_FALSE);
+
+    if (vbSize < 0 || ibSize < 0) {
+        return JNI_FALSE;
+    }
+
+    UINT uvbSize = (UINT) vbSize;
+    UINT uibSize = (UINT) ibSize;
+    UINT vertexBufferSize = env->GetArrayLength(vb);
+    UINT indexBufferSize = env->GetArrayLength(ib);
+    if (uvbSize > vertexBufferSize || uibSize > indexBufferSize) {
+        return JNI_FALSE;
+    }
+
+    float *vertexBuffer = (float *) (env->GetPrimitiveArrayCritical(vb, NULL));
+    if (vertexBuffer == NULL) {
+        return JNI_FALSE;
+    }
+
+    UINT *indexBuffer = (UINT *) (env->GetPrimitiveArrayCritical(ib, NULL));
+    if (indexBuffer == NULL) {
+        env->ReleasePrimitiveArrayCritical(vb, vertexBuffer, 0);
+        return JNI_FALSE;
+    }
+
+    boolean result = mesh->buildBuffers(vertexBuffer, uvbSize, indexBuffer, uibSize);
+    env->ReleasePrimitiveArrayCritical(ib, indexBuffer, 0);
+    env->ReleasePrimitiveArrayCritical(vb, vertexBuffer, 0);
+
+    return result;
 }

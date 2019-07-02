@@ -62,7 +62,8 @@ class ES2PhongMaterial extends BaseGraphicsResource implements PhongMaterial {
         return new ES2PhongMaterial(context, nativeHandle, new ES2PhongMaterialDisposerRecord(context, nativeHandle));
     }
 
-    long getNativeHandle() {
+    @Override
+    public long getNativeHandle() {
         return nativeHandle;
     }
 

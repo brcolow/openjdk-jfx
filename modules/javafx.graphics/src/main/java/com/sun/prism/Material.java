@@ -29,6 +29,8 @@ package com.sun.prism;
  * TODO: 3D - Need documentation
  * This class represents base material for retained mode rendering
  */
-
 public interface Material {
+    long getNativeHandle();
+    void lockTextureMaps();
+    void unlockTextureMaps();
 }

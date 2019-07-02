@@ -31,6 +31,7 @@ import com.sun.javafx.geom.Vec3f;
 import com.sun.prism.Mesh;
 import java.util.Arrays;
 import java.util.HashMap;
+
 import javafx.scene.shape.VertexFormat;
 import com.sun.javafx.logging.PlatformLogger;
 
@@ -39,6 +40,7 @@ import com.sun.javafx.logging.PlatformLogger;
  */
 public abstract class BaseMesh extends BaseGraphicsResource implements Mesh {
 
+    private final long nativeHandle;
     private int nVerts;
     private int nTVerts;
     private int nFaces;
@@ -68,15 +70,10 @@ public abstract class BaseMesh extends BaseGraphicsResource implements Mesh {
     };
     public static final int FACE_MEMBERS_SIZE = 7;
 
-    protected BaseMesh(Disposer.Record disposerRecord) {
+    protected BaseMesh(Disposer.Record disposerRecord, long nativeHandle) {
         super(disposerRecord);
+        this.nativeHandle = nativeHandle;
     }
-
-    public abstract boolean buildNativeGeometry(float[] vertexBuffer,
-            int vertexBufferLength, int[] indexBufferInt, int indexBufferLength);
-
-    public abstract boolean buildNativeGeometry(float[] vertexBuffer,
-            int vertexBufferLength, short[] indexBufferShort, int indexBufferLength);
 
     private boolean[] dirtyVertices;
     private float[] cachedNormals;
@@ -91,6 +88,21 @@ public abstract class BaseMesh extends BaseGraphicsResource implements Mesh {
     private HashMap<Integer, MeshGeomComp2VB> point2vbMap;
     private HashMap<Integer, MeshGeomComp2VB> normal2vbMap;
     private HashMap<Integer, MeshGeomComp2VB> texCoord2vbMap;
+
+    @Override
+    public void dispose() {
+        disposerRecord.dispose();
+    }
+
+    public final long getNativeHandle() {
+        return nativeHandle;
+    }
+
+    public abstract boolean buildNativeGeometry(float[] vertexBuffer, int vertexBufferLength,
+                                       int[] indexBufferInt, int indexBufferLength);
+
+    public abstract boolean buildNativeGeometry(float[] vertexBuffer, int vertexBufferLength,
+                                       short[] indexBufferShort, int indexBufferLength);
 
     private void convertNormalsToQuats(MeshTempState instance, int numberOfVertices,
             float[] normals, float[] tangents, float[] bitangents,
