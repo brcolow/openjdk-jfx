@@ -43,7 +43,6 @@ class ES2PhongMaterial extends BaseGraphicsResource implements PhongMaterial {
     static int count = 0;
     private final ES2Context context;
     private final long nativeHandle;
-    TextureMap maps[] = new TextureMap[MAX_MAP_TYPE];
 
     Color diffuseColor = Color.WHITE;
     Color specularColor = Color.WHITE;

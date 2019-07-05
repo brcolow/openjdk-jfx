@@ -139,7 +139,7 @@ class ES2Context extends BaseShaderContext {
         return pixelFormat;
     }
 
-    ES2Shader getPhongShader(MeshView meshView) {
+    ES2Shader getPhongShader(ES2MeshView meshView) {
         return ES2PhongShader.getShader(meshView, this);
     }
 
@@ -475,8 +475,7 @@ class ES2Context extends BaseShaderContext {
 
     @Override
     public void renderMeshView(long nativeHandle, Graphics g, MeshView meshView) {
-
-        ES2Shader shader = getPhongShader(meshView);
+        ES2Shader shader = ES2PhongShader.getShader((ES2MeshView) meshView, this);
         setShaderProgram(shader.getProgramObject());
 
         // Support retina display by scaling the projViewTx and pass it to the shader.

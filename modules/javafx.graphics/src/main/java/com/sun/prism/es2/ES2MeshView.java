@@ -62,6 +62,11 @@ class ES2MeshView extends BaseMeshView {
         }
     }
 
+    @Override
+    public ES2PhongMaterial getMaterial() {
+        return (ES2PhongMaterial) material;
+    }
+
     ES2Light[] getPointLights() {
         return lights;
     }

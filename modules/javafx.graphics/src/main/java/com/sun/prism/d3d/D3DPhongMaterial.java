@@ -42,7 +42,6 @@ class D3DPhongMaterial extends BaseGraphicsResource implements PhongMaterial {
 
     private final D3DContext context;
     private final long nativeHandle;
-    private TextureMap[] maps = new TextureMap[MAX_MAP_TYPE];
 
     private D3DPhongMaterial(D3DContext context, long nativeHandle,
             Disposer.Record disposerRecord) {
