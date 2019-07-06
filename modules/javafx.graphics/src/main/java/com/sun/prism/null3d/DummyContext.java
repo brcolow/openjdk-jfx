@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, 2016, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2008, 2019, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -30,6 +30,9 @@ import com.sun.javafx.geom.Rectangle;
 import com.sun.javafx.geom.transform.BaseTransform;
 import com.sun.javafx.sg.prism.NGCamera;
 import com.sun.prism.CompositeMode;
+import com.sun.prism.Graphics;
+import com.sun.prism.Material;
+import com.sun.prism.MeshView;
 import com.sun.prism.RTTexture;
 import com.sun.prism.RenderTarget;
 import com.sun.prism.Texture;
@@ -44,7 +47,7 @@ class DummyContext extends BaseShaderContext {
         super(screen, factory, 32);
     }
 
-    protected void renderQuads(float coordArray[], byte colorArray[], int numVertices) {
+    protected void renderQuads(float[] coordArray, byte[] colorArray, int numVertices) {
     }
 
     @Override
@@ -76,6 +79,30 @@ class DummyContext extends BaseShaderContext {
 
     @Override
     protected void updateCompositeMode(CompositeMode mode) {
+    }
+
+    @Override
+    public void setCullingMode(long nativeMeshView, int cullMode) {
+    }
+
+    @Override
+    public void setMaterial(long nativeHandle, Material material) {
+    }
+
+    @Override
+    public void setWireframe(long nativeMeshView, boolean wireframe) {
+    }
+
+    @Override
+    public void setAmbientLight(long nativeHandle, float r, float g, float b) {
+    }
+
+    @Override
+    public void setPointLight(long nativeHandle, int index, float x, float y, float z, float r, float g, float b, float w) {
+    }
+
+    @Override
+    public void renderMeshView(long nativeHandle, Graphics g, MeshView meshView) {
     }
 
     @Override
