@@ -40,7 +40,7 @@ public interface MeshView {
 
     public void setCullingMode(int mode);
 
-    public PhongMaterial getMaterial();
+    public Material getMaterial();
     public void setMaterial(Material material);
 
     public void setWireframe(boolean wireframe);

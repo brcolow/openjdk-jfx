@@ -25,6 +25,7 @@
 
 package com.sun.prism.es2;
 
+import com.sun.prism.Material;
 import com.sun.prism.impl.BaseMeshView;
 import com.sun.prism.impl.Disposer;
 import com.sun.prism.impl.ps.BaseShaderContext;
@@ -63,7 +64,7 @@ class ES2MeshView extends BaseMeshView {
     }
 
     @Override
-    public ES2PhongMaterial getMaterial() {
+    public Material getMaterial() {
         return (ES2PhongMaterial) material;
     }
 

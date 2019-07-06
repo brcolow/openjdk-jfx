@@ -28,6 +28,7 @@ package com.sun.prism.impl;
 import com.sun.prism.Graphics;
 import com.sun.prism.Material;
 import com.sun.prism.MeshView;
+import com.sun.prism.PhongMaterial;
 import com.sun.prism.impl.ps.BaseShaderContext;
 
 /**
