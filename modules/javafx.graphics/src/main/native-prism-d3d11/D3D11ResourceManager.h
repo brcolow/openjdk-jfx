@@ -59,6 +59,8 @@ public:
     ID3D11Texture1D*   GetTexture1D() { return pTexture1D; }
     ID3D11Texture2D*   GetTexture2D() { return pTexture2D; }
     ID3D11Texture3D*   GetTexture3D() { return pTexture3D; }
+    ID3D11Texture2D*   GetDepthSurface() { return pDepthSurface; }
+    void               SetDepthSurface(ID3D11Texture2D* pDB) { pDepthSurface = pDB; }
     IDXGISwapChain1*   GetSwapChain() { return pSwapChain; }
     UINT               GetWidth();
     UINT               GetHeight();
@@ -81,6 +83,7 @@ private:
     ID3D11Texture1D*   pTexture1D;
     ID3D11Texture2D*   pTexture2D;
     ID3D11Texture3D*   pTexture3D;
+    ID3D11Texture2D*   pDepthSurface;
     IDXGISwapChain1*   pSwapChain;
 };
 

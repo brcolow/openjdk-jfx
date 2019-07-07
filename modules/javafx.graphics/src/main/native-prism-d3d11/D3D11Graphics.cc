@@ -25,6 +25,7 @@
 
 #include "D3D11Pipeline.h"
 #include "D3D11PipelineManager.h"
+#include "D3D11ResourceManager.h"
 
 #include "com_sun_prism_d3d11_D3D11Graphics.h"
 
@@ -34,13 +35,13 @@
  */
 JNIEXPORT jint JNICALL Java_com_sun_prism_d3d11_D3D11SwapChain_nPresent
   (JNIEnv *, jclass, jlong ctx, jlong swapChain) {
-    D3D11Context *pCtx = (D3D11Context*)jlong_to_ptr(ctx);
+    D3D11Context *pCtx = (D3D11Context*) jlong_to_ptr(ctx);
 
     if (pCtx == NULL) {
         return E_FAIL;
     }
 
-    D3D11Resource *pSwapChainRes = (D3D11Resource*)jlong_to_ptr(swapChain);
+    D3D11Resource *pSwapChainRes = (D3D11Resource*) jlong_to_ptr(swapChain);
 
     if (pSwapChainRes == NULL) {
         return E_FAIL;
@@ -57,4 +58,34 @@ JNIEXPORT jint JNICALL Java_com_sun_prism_d3d11_D3D11SwapChain_nPresent
     presentParams.pScrollRect = NULL;
     presentParams.pScrollOffset = NULL;
     return pSwapChainRes->GetSwapChain()->Present1(0, 0, &presentParams);
+}
+
+/*
+ * Class:     com_sun_prism_d3d11_D3D11Context
+ * Method:    nSetRenderTarget
+ */
+JNIEXPORT jint JNICALL Java_com_sun_prism_d3d11_D3D11Context_nSetRenderTarget
+  (JNIEnv *, jclass, jlong ctx, jlong targetRes, jboolean depthBuffer, jboolean msaa) {
+    D3D11Context *pCtx = (D3D11Context*) jlong_to_ptr(ctx);
+    if (pCtx == NULL) {
+        return E_FAIL;
+    }
+
+    D3D11Resource *pRes = (D3D11Resource*) jlong_to_ptr(targetRes);
+    if (pRes == NULL) {
+        return E_FAIL;
+    }
+
+    ID3D11Texture2D *pRenderTarget = pRes->GetTexture2D();
+    if (pRenderTarget == NULL) {
+        return E_FAIL;
+    }
+
+    ID3D11Texture2D *pDepthBuffer = pRes->GetDepthSurface();
+
+    // https://docs.microsoft.com/en-us/windows/win32/direct3d11/d3d10-graphics-programming-guide-output-merger-stage
+    // TODO: To actually set the render target, we will call OMSetRenderTargets
+    HRESULT res = pCtx->SetRenderTarget(pRenderTarget, &pDepthBuffer, depthBuffer, msaa);
+    pRes->SetDepthSurface(pDepthBuffer);
+    return res;
 }
