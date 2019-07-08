@@ -234,3 +234,34 @@ int D3D11Context::release() {
     delete this;
     return 0;
 }
+
+void D3D11Context::setWorldTransformIdentity() {
+    fprintf(stderr, "D3D11Context::setWorldTransformIdentity\n");
+
+    if (pd3d11Device == NULL) {
+        fprintf(stderr, "pd3d11Device was NULL\n");
+        return E_FAIL;
+    }
+
+    world = DirectX::XMMatrixIdentity();
+    // FIXME: or?
+    DirectX::XMStoreFloat4x4(&world, DirectX::XMMatrixIdentity());
+}
+
+void
+D3DContext::setWorldTransform(jdouble m00, jdouble m01, jdouble m02, jdouble m03,
+            jdouble m10, jdouble m11, jdouble m12, jdouble m13,
+            jdouble m20, jdouble m21, jdouble m22, jdouble m23,
+            jdouble m30, jdouble m31, jdouble m32, jdouble m33) {
+    TraceLn(NWT_TRACE_INFO, "D3DContext::setWorldTransform");
+
+    if (pd3d11Device == NULL) {
+        fprintf(stderr, "pd3d11Device was NULL\n");
+        return E_FAIL;
+    }
+
+    world = DirectX::XMMatrixSet(m00, m01, m02, m03,
+                                 m10, m11, m12, m13,
+                                 m20, m21, m22, m23,
+                                 m30, m31, m32, m33);
+}

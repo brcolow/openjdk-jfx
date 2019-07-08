@@ -212,6 +212,13 @@ public abstract class BaseShaderContext extends BaseContext {
     protected abstract void updateShaderTransform(Shader shader,
                                                   BaseTransform xform);
 
+    /**
+     * Set the world view matrix to the given {@code xform} transformation.
+     *
+     * @apiNote if {@code xform} is {@literal null} then the world view matrix should
+     * be set to the identity matrix.
+     * @param xform the transformation to set the world view matrix to
+     */
     protected abstract void updateWorldTransform(BaseTransform xform);
 
     protected abstract void updateClipRect(Rectangle clipRect);

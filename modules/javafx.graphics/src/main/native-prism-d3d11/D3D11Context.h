@@ -76,6 +76,13 @@ public:
 
     DirectX::XMFLOAT4X4 *GetWorldTx() { return &world; }
 
+    void setWorldTransformIdentity();
+
+    void setWorldTransform(jdouble m00, jdouble m01, jdouble m02, jdouble m03,
+            jdouble m10, jdouble m11, jdouble m12, jdouble m13,
+            jdouble m20, jdouble m21, jdouble m22, jdouble m23,
+            jdouble m30, jdouble m31, jdouble m32, jdouble m33);
+
 private:
     D3D11Context(UINT adapter);
 

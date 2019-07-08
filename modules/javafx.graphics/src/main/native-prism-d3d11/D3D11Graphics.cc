@@ -89,3 +89,42 @@ JNIEXPORT jint JNICALL Java_com_sun_prism_d3d11_D3D11Context_nSetRenderTarget
     pRes->SetDepthSurface(pDepthBuffer);
     return res;
 }
+
+/*
+ * Class:     com_sun_prism_d3d11_D3D11Context
+ * Method:    nSetWorldTransformToIdentity
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_prism_d3d11_D3D11Context_nSetWorldTransformToIdentity
+  (JNIEnv *, jclass, jlong ctx)
+{
+    D3D11Context *pCtx = (D3D11Context*)jlong_to_ptr(ctx);
+    if (pCtx == NULL) {
+        return E_FAIL;
+    }
+
+    pCtx->setWorldTransformIdentity();
+}
+
+/*
+ * Class:     com_sun_prism_d3d11_D3D11Context
+ * Method:    nSetWorldTransform
+ * Signature: (JDDDDDDDDDDDDDDDD)V
+ */
+JNIEXPORT void JNICALL Java_com_sun_prism_d3d11_D3D11Context_nSetWorldTransform
+  (JNIEnv *, jclass, jlong ctx,
+   jdouble m00, jdouble m01, jdouble m02, jdouble m03,
+   jdouble m10, jdouble m11, jdouble m12, jdouble m13,
+   jdouble m20, jdouble m21, jdouble m22, jdouble m23,
+   jdouble m30, jdouble m31, jdouble m32, jdouble m33) {
+    D3D11Context *pCtx = (D3D11Context*) jlong_to_ptr(ctx);
+    if (pCtx == NULL) {
+        return E_FAIL;
+    }
+
+
+    pCtx->setWorldTransform(m00, m01, m02, m03,
+            m10, m11, m12, m13,
+            m20, m21, m22, m23,
+            m30, m31, m32, m33);
+}

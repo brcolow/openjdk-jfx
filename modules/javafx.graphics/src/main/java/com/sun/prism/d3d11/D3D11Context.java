@@ -80,7 +80,15 @@ public class D3D11Context extends BaseShaderContext {
 
     @Override
     protected void updateWorldTransform(BaseTransform xform) {
-
+        if ((xform == null) || xform.isIdentity()) {
+            nSetWorldTransformToIdentity(pContext);
+        } else {
+            nSetWorldTransform(pContext,
+                    xform.getMxx(), xform.getMxy(), xform.getMxz(), xform.getMxt(),
+                    xform.getMyx(), xform.getMyy(), xform.getMyz(), xform.getMyt(),
+                    xform.getMzx(), xform.getMzy(), xform.getMzz(), xform.getMzt(),
+                    0.0, 0.0, 0.0, 1.0);
+        }
     }
 
     @Override
@@ -138,5 +146,10 @@ public class D3D11Context extends BaseShaderContext {
     }
 
     private static native int nSetRenderTarget(long pContext, long pDest, boolean depthBuffer, boolean msaa);
-
+    private static native void nSetWorldTransformToIdentity(long pContext);
+    private static native void nSetWorldTransform(long pContext,
+                                                  double m00, double m01, double m02, double m03,
+                                                  double m10, double m11, double m12, double m13,
+                                                  double m20, double m21, double m22, double m23,
+                                                  double m30, double m31, double m32, double m33);
 }
